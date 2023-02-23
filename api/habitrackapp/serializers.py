@@ -13,3 +13,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         ]
         
 
+class TemplateSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Template
+        fields = [
+            "url",
+            "id",
+            "name",
+            "description",
+            "option_1",
+            "option_2", 
+            "option_3", 
+            "option_4",
+        ]
+
