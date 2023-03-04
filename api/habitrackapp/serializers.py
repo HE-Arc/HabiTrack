@@ -3,61 +3,50 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Template
 
-# Simple User Serializer
+# User Serializer
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    templates = serializers.HyperlinkedRelatedField(
+        many=True,
+        view_name="template-detail",
+        read_only=True)
+
     class Meta:
         model = User
         fields = [
             "url",
             "id",
             "username",
+            "templates"
         ]
 
 
-# Simple Template Serializer
+# Template Serializer
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
+    users = UserSerializer(many=True, read_only=True)
+    creator = serializers.HyperlinkedRelatedField(
+        many=False,
+        view_name="user-detail",
+        queryset=User.objects.all(),
+        allow_null=True,
+        read_only=False,
+        source="creator.id"  # This calls the field in the model
+    )
+
     class Meta:
         model = Template
         fields = [
             "url",
             "id",
+            "users",
             "name",
             "description",
             "option_1",
             "option_2",
             "option_3",
             "option_4",
-        ]
-
-# Adding more fields to the UserSerializer
-
-
-class ComplexUserSerializer(UserSerializer):
-    templates = serializers.HyperlinkedRelatedField(
-        many=True, view_name="template-detail",
-        read_only=True)
-
-    class Meta:
-        model = User
-        fields = UserSerializer.Meta.fields + [
-            "templates",
-        ]
-
-
-# Adding more fields to the TemplateSerializer
-
-
-class ComplexTemplateSerializer(TemplateSerializer):
-    user_object = UserSerializer(source="user", read_only=True)
-    template_object = TemplateSerializer(source="template", read_only=True)
-
-    class Meta:
-        model = Template
-        fields = TemplateSerializer.Meta.fields + [
-            "user_object",
-            "template_object",
+            "creator"
         ]

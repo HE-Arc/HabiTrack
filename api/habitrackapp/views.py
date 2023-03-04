@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .serializers import ComplexUserSerializer, ComplexTemplateSerializer
+from .serializers import UserSerializer, TemplateSerializer
 from rest_framework import generics
 from .models import Template
 from rest_framework import viewsets
@@ -26,15 +26,14 @@ from rest_framework import viewsets
 
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
-    # We need the complex serializer here
-    serializer_class = ComplexTemplateSerializer
+    serializer_class = TemplateSerializer
+    
 
     # No actions needed for the moment
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
-    # We need the complex serializer here
-    serializer_class = ComplexUserSerializer
+    serializer_class = UserSerializer
 
     # No actions needed for the moment

@@ -30,16 +30,16 @@ const submit = async () => {
 
     // TODO: Check user login
     // Somehow??
-
+    console.log(currentUser.value?.url);
     await axios.post("http://127.0.0.1:8000/api/templates/", {
       // TODO: Get current user
+      creator: currentUser.value?.url,
       name: name.value,
       description: description.value,
       option_1: option_1.value,
       option_2: option_2.value,
       option_3: option_3.value,
       option_4: option_4.value,
-      user: currentUser.value?.url,
     });
     success.value = true;
   } catch (err) {

@@ -15,7 +15,6 @@ const fetchTemplates = async () => {
 // Fecth all User from DB
 
 const users = ref([]);
-const currentUser = ref(null);
 
 const fetchUsers = async () => {
   users.value = (await axios.get("http://127.0.0.1:8000/api/users/")).data;
@@ -30,7 +29,7 @@ const submit = async (template) => {
     errors.value = null;
 
     const res = await axios.post("http://127.0.0.1:8000/api/templates/", {
-      user: currentUser.value?.url,
+      creator: template.creator,
       name: template.name,
       description: template.description,
       option_1: template.option_1,
@@ -43,6 +42,19 @@ const submit = async (template) => {
   } catch (error) {
     errors.value = error;
     console.log(error.response.data);
+  }
+};
+
+const deleteTemplate = async (template) => {
+  try {
+    errors.value = null;
+
+    await axios.delete(`http://127.0.0.1:8000/api/templates/${template.id}/`);
+
+    // remove the template from the local array
+    templates.value = templates.value.filter((t) => t.id !== template.id);
+  } catch (err) {
+    errors.value = err.message;
   }
 };
 
@@ -92,6 +104,10 @@ onMounted(() => {
             <div class="text-h6">{{ template.option_4 }}</div>
           </q-card-section>
 
+          <q-card-section class="text-center">
+            <div class="text-h6">Created by: {{ template.creator }}</div>
+          </q-card-section>
+
           <!--<q-card-section class="text-center">
             <q-btn color="primary" :to="{ name: 'templates.edit', params: { id: template.id } }">
               <q-icon left name="mdi-pencil" />
@@ -109,6 +125,19 @@ onMounted(() => {
             >
               <q-icon left size="xl" name="mdi-numeric-positive-1" />
               <div>Subscribe</div>
+            </q-btn>
+          </q-card-actions>
+
+          <q-card-actions vertical>
+            <q-btn
+              push
+              @click="deleteTemplate(template)"
+              class="q-ma-xs"
+              color="red"
+              dense
+            >
+              <q-icon self-center size="xl" name="mdi-numeric-positive-1" />
+              <div>Delete</div>
             </q-btn>
           </q-card-actions>
         </q-card>
