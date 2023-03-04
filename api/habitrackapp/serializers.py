@@ -3,14 +3,32 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Template
 
-# User Serializer
+
+###########################################################################
+# Serializers
+# They define the API representation.
+# They are also responsible for validating the data that is deserialized.
+
+
+#############################################################
+#                      User Serializer                      #
+#############################################################
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    templates = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name="template-detail",
-        read_only=True)
+
+    # SerializerMethodField is a read-only field that get its
+    # representation from calling a method on the parent serializer class.
+    # The method called will be of the form "get_{field_name}", and should take a single
+    # argument, which is the object being serialized.
+    templates = serializers.SerializerMethodField()
+
+    # This function is used to get the templates of the user
+    def get_templates(self, obj):
+        templates = Template.objects.filter(creator=obj)
+        serializer = TemplateSerializer(
+            templates, many=True, context=self.context)
+        return serializer.data
 
     class Meta:
         model = User
@@ -22,7 +40,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-# Template Serializer
+#############################################################
+#                    Template Serializer                    #
+#############################################################
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,9 +52,22 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
         view_name="user-detail",
         queryset=User.objects.all(),
         allow_null=True,
-        read_only=False,
-        source="creator.id"  # This calls the field in the model
+        required=False,
+        default=serializers.CurrentUserDefault()
     )
+
+    # SerializerMethodField is a read-only field that get its
+    # representation from calling a method on the parent serializer class.
+    # The method called will be of the form "get_{field_name}", and should take a single
+    # argument, which is the object being serialized.
+    creator_username = serializers.SerializerMethodField()
+
+    # This function is used to get the username of the creator
+    def get_creator_username(self, obj):
+        creator = obj.creator
+        if creator is not None:
+            return creator.username
+        return None
 
     class Meta:
         model = Template
@@ -48,5 +81,6 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
             "option_2",
             "option_3",
             "option_4",
-            "creator"
+            "creator",
+            "creator_username"
         ]

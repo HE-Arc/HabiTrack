@@ -30,7 +30,6 @@ const submit = async () => {
 
     // TODO: Check user login
     // Somehow??
-    console.log(currentUser.value?.url);
     await axios.post("http://127.0.0.1:8000/api/templates/", {
       // TODO: Get current user
       creator: currentUser.value?.url,

@@ -105,7 +105,9 @@ onMounted(() => {
           </q-card-section>
 
           <q-card-section class="text-center">
-            <div class="text-h6">Created by: {{ template.creator }}</div>
+            <div class="text-h6">
+              Created by: {{ template.creator_username }}
+            </div>
           </q-card-section>
 
           <!--<q-card-section class="text-center">
