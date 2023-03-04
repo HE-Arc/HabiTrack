@@ -75,7 +75,7 @@ onMounted(() => {
 
     <div class="row">
       <div
-        class="text-center col-12 col-sm-6 col-md-4 col-lg-3 q-pa-sm"
+        class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
         v-for="(template, index) in templates"
         :key="index"
       >
@@ -138,7 +138,7 @@ onMounted(() => {
               color="red"
               dense
             >
-              <q-icon self-center size="xl" name="mdi-numeric-positive-1" />
+              <q-icon self-center size="xl" name="mdi-delete-forever" />
               <div>Delete</div>
             </q-btn>
           </q-card-actions>

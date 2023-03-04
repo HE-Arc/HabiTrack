@@ -53,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <q-page padding>
+  <q-page class="q-ma-auto" padding>
     <ErrorBanner :errors="errors" />
 
     <!-- TODO: Get current user -->
@@ -66,13 +66,13 @@ onMounted(() => {
       outlined
     />
 
-    <q-form class="q-gutter-md" @submit="submit()">
-      <div class="row self-center justify-evenly">
-        <div class="col-8 col-md-6 q-mt-md">
-          <q-card class="q-pa-lg">
+    <q-form class="" @submit="submit()">
+      <div>
+        <div class="q-mt-md">
+          <q-card>
             <q-card-section class="">
               <q-btn color="primary" :to="{ name: 'templates' }">
-                <q-icon left name="mdi-arrow-left-top-bold" />
+                <q-icon left name="mdi-arrow-left" />
                 <div>Back</div>
               </q-btn>
             </q-card-section>
