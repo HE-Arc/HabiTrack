@@ -17,14 +17,29 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Template',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID')
+                ),
+
                 ('name', models.CharField(max_length=100)),
                 ('description', models.CharField(blank=True, max_length=2000)),
                 ('option_1', models.CharField(max_length=30)),
                 ('option_2', models.CharField(max_length=30)),
                 ('option_3', models.CharField(max_length=30)),
                 ('option_4', models.CharField(max_length=30)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='templates', to=settings.AUTH_USER_MODEL)),
+
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='templates',
+                        to=settings.AUTH_USER_MODEL)
+                ),
             ],
         ),
     ]

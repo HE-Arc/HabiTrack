@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, TemplateSerializer
+from .serializers import ComplexUserSerializer, ComplexTemplateSerializer
 from rest_framework import generics
 from .models import Template
 from rest_framework import viewsets
@@ -9,13 +9,6 @@ from rest_framework import viewsets
 # from rest_framework import status
 
 # Create your views here.
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 # TODO Remove, help for the understanding of CaffeinItemViewSet
 # @api_view(["GET", "POST"])
@@ -29,6 +22,19 @@ class UserDetail(generics.RetrieveAPIView):
 #         serializer.save()
 #         return Response(serializer.data, status=status.HTTP_201_CREATED)
 #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
-    serializer_class = TemplateSerializer
+    # We need the complex serializer here
+    serializer_class = ComplexTemplateSerializer
+
+    # No actions needed for the moment
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    # We need the complex serializer here
+    serializer_class = ComplexUserSerializer
+
+    # No actions needed for the moment

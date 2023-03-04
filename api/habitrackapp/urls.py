@@ -4,20 +4,24 @@ from habitrackapp import views
 from rest_framework.routers import DefaultRouter
 
 
-
 router = DefaultRouter()
+
 router.register("templates",
                 views.TemplateViewSet,
                 basename="template")
 
 
+router.register("users",
+                views.UserViewSet,
+                basename="user")
+
 urlpatterns = [
     # TODO Remove
-    path("users/", views.UserList.as_view(), name="user-list"),
-    path(
-        "users/<int:pk>/",
-        views.UserDetail.as_view(),
-        name="user-detail",
-    ),
+    # path("users/", views.UserList.as_view(), name="user-list"),
+    # path(
+    #    "users/<int:pk>/",
+    #    views.UserDetail.as_view(),
+    #    name="user-detail",
+    # ),
     path("", include(router.urls))
 ]
