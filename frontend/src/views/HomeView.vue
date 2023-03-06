@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 const users = ref([]);
 
 const fetchUsers = async () => {
-  const res = await axios.get("http://localhost:8000/api/users/");
+  const res = await axios.get("/users/");
   users.value = res.data;
 };
 

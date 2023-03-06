@@ -19,7 +19,7 @@ const users = ref([]);
 const currentUser = ref(null);
 
 const fetchUsers = async () => {
-  users.value = (await axios.get("http://127.0.0.1:8000/api/users/")).data;
+  users.value = (await axios.get("/users/")).data;
 };
 
 // Submit new Template
@@ -30,7 +30,7 @@ const submit = async () => {
 
     // TODO: Check user login
     // Somehow??
-    await axios.post("http://127.0.0.1:8000/api/templates/", {
+    await axios.post("/templates/", {
       // TODO: Get current user
       creator: currentUser.value?.url,
       name: name.value,

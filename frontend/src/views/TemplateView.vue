@@ -28,7 +28,7 @@ const submit = async (template) => {
   try {
     errors.value = null;
 
-    const res = await axios.post("http://127.0.0.1:8000/api/templates/", {
+    const res = await axios.post("/templates/", { // no need for the full URL, since we're using a defualt value set in main.js
       creator: template.creator,
       name: template.name,
       description: template.description,
