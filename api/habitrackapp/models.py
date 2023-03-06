@@ -15,5 +15,5 @@ class Template(models.Model):
     option_4 = models.CharField(max_length=30)
 
     creator = models.ForeignKey(
-        User, related_name="created_templates", on_delete=models.CASCADE, blank=True)
+        User, related_name="created_templates", on_delete=models.CASCADE, blank=True, null=True)
     # TODO isPublic = models.models.BooleanField(_("True"))
