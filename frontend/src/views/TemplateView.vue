@@ -7,7 +7,7 @@ import ErrorBanner from "../components/ErrorBanner.vue";
 const templates = ref([]);
 
 const fetchTemplates = async () => {
-  const result = await axios.get("http://127.0.0.1:8000/api/templates/");
+  const result = await axios.get("/templates/");
 
   templates.value = result.data;
 };
@@ -17,7 +17,7 @@ const fetchTemplates = async () => {
 const users = ref([]);
 
 const fetchUsers = async () => {
-  users.value = (await axios.get("http://127.0.0.1:8000/api/users/")).data;
+  users.value = (await axios.get("/users/")).data;
 };
 
 // We need error handling
@@ -28,7 +28,11 @@ const submit = async (template) => {
   try {
     errors.value = null;
 
-    const res = await axios.post("/templates/", { // no need for the full URL, since we're using a defualt value set in main.js
+    // print axios url
+    console.log("axios url: ", axios.defaults.baseURL);
+
+    // no need for the full URL, since we're using a defualt value set in main.js
+    const res = await axios.post("/templates/", {
       creator: template.creator,
       name: template.name,
       description: template.description,
