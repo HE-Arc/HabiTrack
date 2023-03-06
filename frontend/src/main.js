@@ -21,8 +21,7 @@ app.use(Quasar, {
 });
 
 // Set config defaults when creating the instance
-// TODO MAKE ENV VAR
-// On server: https://habi-track.k8s.ing.he-arc.ch/api
+
 axios.defaults.baseURL = import.meta.env.VITE_APP_API_URL;
 
 app.mount("#app");

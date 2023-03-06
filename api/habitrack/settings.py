@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +28,7 @@ SECRET_KEY = 'django-insecure-4g$(68ha@b!ue9fq7$re4qqlk!98oyzjg5i50y_u(o(ig9)c&e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://habi-track.k8s.ing.he-arc.ch/',
-                 'https://habi-track.k8s.ing.he-arc.ch/api',
+ALLOWED_HOSTS = ['habi-track.k8s.ing.he-arc.ch',
                  'localhost',
                  '127.0.0.1']
 
@@ -56,9 +58,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    os.getenv("LOCALHOST_URL"),
+    os.getenv("LOCALHOST_IP"),
+    os.getenv("SERVER_URL")
 ]
 
 ROOT_URLCONF = 'habitrack.urls'
