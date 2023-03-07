@@ -1,12 +1,15 @@
 <script setup>
 import NavBar from "./components/NavBar.vue";
+import { useQuasar } from "quasar";
+
+const $q = useQuasar();
+$q.dark.set(true);
 </script>
 
 <template>
-  <q-layout view="hHh Lpr fFf">
+  <q-layout view="lHh lpr lFf">
     <!-- navbar -->
     <NavBar />
-
     <q-page-container>
       <router-view />
     </q-page-container>

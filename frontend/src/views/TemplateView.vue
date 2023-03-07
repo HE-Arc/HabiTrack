@@ -28,6 +28,7 @@ const errors = ref(null);
 // Allow subscription to a new Template
 const submit = async (template) => {
   // set CSRF token as header
+  // TODO - may need this for later so leaving it here...
   const csrfToken = Cookies.get("csrftoken");
   const headers = {
     "X-CSRFToken": csrfToken,
@@ -66,102 +67,93 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- Old Version-->
-  <div class="q-pa-md">
-    <div class="q-gutter-md" style="max-width: 500px">
-      <q-responsive :ratio="16 / 9">
-        <q-page>
-          <ErrorBanner :errors="errors" />
+  <q-page padding>
+    <ErrorBanner :errors="errors" />
+    <!--START TEMPORARY ELEMENTS-->
 
-          <!-- TODO: Get current user -->
-          <q-select
-            v-model="currentUser"
-            option-value="id"
-            option-label="username"
-            :options="users"
-            label="User"
-            outlined
-          />
+    <q-btn id="add_template" color="primary" :to="{ name: 'templates.create' }">
+      <q-icon left name="mdi-plus-box" />
+      <q-label for="add_template">Create a new template</q-label>
+    </q-btn>
 
-          <q-btn color="primary" :to="{ name: 'templates.create' }">
-            <q-icon left size="xl" name="mdi-plus-box" />
-            <div>Create a new template</div>
+    <q-select
+      id="user_select"
+      v-model="currentUser"
+      option-value="id"
+      option-label="username"
+      :options="users"
+      label="Select a user to subscribe them to a template"
+    />
+
+    <!--END TEMPORARY ELEMENTS-->
+    <div class="q-pa-md items-start q-gutter-md">
+      <q-card
+        class="template-card q-pa-sm"
+        style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
+        v-for="(template, index) in templates"
+        :key="index"
+        flat
+        bordered
+      >
+        <q-card-section class="text-center">
+          <div class="text-h5">{{ template.name }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.description }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_1 }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_2 }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_3 }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_4 }}</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <div class="text-h6">Created by: {{ template.creator_username }}</div>
+        </q-card-section>
+
+        <q-card-actions vertical>
+          <q-btn
+            push
+            @click="submit(template)"
+            color="secondary"
+            label="Subscribe"
+            dense
+          >
+            <q-icon size="md" name="mdi-numeric-positive-1" />
           </q-btn>
+        </q-card-actions>
 
-          <div class="row">
-            <div
-              class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
-              v-for="(template, index) in templates"
-              :key="index"
-            >
-              <q-card class="q-pa-md">
-                <q-card-section class="text-center">
-                  <div class="text-h5">{{ template.name }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.description }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_1 }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_2 }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_3 }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_4 }}</div>
-                </q-card-section>
-
-                <q-card-section class="text-center">
-                  <div class="text-h6">
-                    Created by: {{ template.creator_username }}
-                  </div>
-                </q-card-section>
-
-                <!--<q-card-section class="text-center">
-            <q-btn color="primary" :to="{ name: 'templates.edit', params: { id: template.id } }">
-              <q-icon left name="mdi-pencil" />
-              <div>Edit</div>
-            </q-btn>
-          </q-card-section>-->
-                <!--TODO hide the subscribe button if user is already subscribed to the template-->
-                <q-card-actions vertical>
-                  <q-btn
-                    push
-                    @click="submit(template)"
-                    class="q-ma-xs"
-                    color="primary"
-                    dense
-                  >
-                    <q-icon left size="xl" name="mdi-numeric-positive-1" />
-                    <div>Subscribe</div>
-                  </q-btn>
-                </q-card-actions>
-
-                <q-card-actions vertical>
-                  <q-btn
-                    push
-                    @click="deleteTemplate(template)"
-                    class="q-ma-xs"
-                    color="red"
-                    dense
-                  >
-                    <q-icon self-center size="xl" name="mdi-delete-forever" />
-                    <div>Delete</div>
-                  </q-btn>
-                </q-card-actions>
-              </q-card>
-            </div>
-          </div>
-        </q-page>
-      </q-responsive>
+        <q-card-actions vertical>
+          <q-btn
+            push
+            @click="deleteTemplate(template)"
+            color="red"
+            label="Delete"
+            dense
+          >
+            <q-icon size="md" name="mdi-delete-forever" />
+          </q-btn>
+        </q-card-actions>
+      </q-card>
     </div>
-  </div>
+  </q-page>
 </template>
+
+<style lang="sass" scoped>
+.template-card
+  width: 100%
+  height: 100%
+  max-width: 20rem
+</style>

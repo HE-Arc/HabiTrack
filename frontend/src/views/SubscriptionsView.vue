@@ -27,65 +27,64 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- Old Version-->
-  <div class="q-pa-md">
-    <div class="q-gutter-md" style="max-width: 500px">
-      <q-responsive :ratio="16 / 9">
-        <q-page>
-          <ErrorBanner :errors="errors" />
+  <div class="q-gutter-md">
+    <q-page>
+      <ErrorBanner :errors="errors" />
 
-          <!-- TODO: Get current user -->
-          <q-select
-            v-model="currentUser"
-            option-value="id"
-            option-label="username"
-            :options="users"
-            label="User"
-            outlined
-          />
+      <!-- TODO: Get current user -->
+      <q-select
+        v-model="currentUser"
+        option-value="id"
+        option-label="username"
+        :options="users"
+        label="Select a user that will be the creator of the template"
+        outlined
+      />
 
-          <q-btn color="primary" @click="fetchTemplates()">
-            <q-icon left size="xl" name="mdi-plus-box" />
-            <div>Fetch subscriptions TEMPORARY</div>
-          </q-btn>
+      <q-btn color="primary" @click="fetchTemplates()">
+        <q-icon left size="xl" name="mdi-plus-box" />
+        <div>Fetch subscriptions TEMPORARY</div>
+      </q-btn>
 
-          <div class="row">
-            <div
-              class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
-              v-for="(template, index) in templates"
-              :key="index"
-            >
-              <q-card class="q-pa-md">
-                <q-card-section class="text-center">
-                  <div class="text-h5">{{ template.name }}</div>
-                </q-card-section>
+      <div class="row">
+        <div
+          class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
+          v-for="(template, index) in templates"
+          :key="index"
+        >
+          <q-card class="q-pa-md">
+            <q-card-section class="text-center">
+              <div class="text-h5">{{ template.name }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.description }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">{{ template.description }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_1 }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">{{ template.option_1 }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_2 }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">{{ template.option_2 }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_3 }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">{{ template.option_3 }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">{{ template.option_4 }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">{{ template.option_4 }}</div>
+            </q-card-section>
 
-                <q-card-section class="text-center">
-                  <div class="text-h6">Created by: {{ template.creator_username }}</div>
-                </q-card-section>
+            <q-card-section class="text-center">
+              <div class="text-h6">
+                Created by: {{ template.creator_username }}
+              </div>
+            </q-card-section>
 
-                <!-- TODO unsubscribe -->
-                <!--<q-card-actions vertical>
+            <!-- TODO unsubscribe -->
+            <!--<q-card-actions vertical>
                   <q-btn
                     push
                     @click="unscubscribeTemplate(template)"
@@ -97,11 +96,9 @@ onMounted(() => {
                   </q-btn>
                 </q-card-actions>
                 >-->
-              </q-card>
-            </div>
-          </div>
-        </q-page>
-      </q-responsive>
-    </div>
+          </q-card>
+        </div>
+      </div>
+    </q-page>
   </div>
 </template>
