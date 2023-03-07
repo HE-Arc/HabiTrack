@@ -46,6 +46,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     # No actions needed for the moment
 
+
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    # TODO Once login is implemented, add user to the template
+    # user = request.user
+    # template.subscriptions.add(user)
+    # For now we add the user with id 1
+    user = User.objects.get(id=1)
+    queryset = Template.objects.filter(subscribers=user)
+    serializer_class = TemplateSerializer
+
 # Subscription logic
 
 # TODO Uncomment when login is implemented

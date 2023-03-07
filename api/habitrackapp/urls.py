@@ -15,6 +15,9 @@ router.register("users",
                 views.UserViewSet,
                 basename="user")
 
+router.register("subscriptions",
+                views.SubscriptionViewSet)
+
 urlpatterns = [
     # TODO Remove
     # path("users/", views.UserList.as_view(), name="user-list"),

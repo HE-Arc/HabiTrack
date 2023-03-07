@@ -9,6 +9,7 @@
     <q-tabs align="left">
       <q-route-tab :to="{ name: 'home' }" label="Home" />
       <q-route-tab :to="{ name: 'templates' }" label="Templates" />
+      <q-route-tab :to="{ name: 'subscriptions' }" label="Subscriptions" />
     </q-tabs>
   </q-header>
 </template>
