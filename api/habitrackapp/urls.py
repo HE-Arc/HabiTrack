@@ -23,5 +23,9 @@ urlpatterns = [
     #    views.UserDetail.as_view(),
     #    name="user-detail",
     # ),
-    path("", include(router.urls))
+    path("", include(router.urls)),
+
+    path('templates/subscribe/<int:template_id>/',
+         views.subscribe_to_template, name='subscribe_to_template'),
+
 ]

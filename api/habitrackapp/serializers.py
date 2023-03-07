@@ -17,17 +17,19 @@ from .models import Template
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
+    # Creations
+
     # SerializerMethodField is a read-only field that get its
     # representation from calling a method on the parent serializer class.
     # The method called will be of the form "get_{field_name}", and should take a single
     # argument, which is the object being serialized.
-    templates = serializers.SerializerMethodField()
+    created_templates = serializers.SerializerMethodField()
 
     # This function is used to get the templates of the user
-    def get_templates(self, obj):
-        templates = Template.objects.filter(creator=obj)
+    def get_created_templates(self, obj):
+        created_templates = Template.objects.filter(creator=obj)
         serializer = TemplateSerializer(
-            templates, many=True, context=self.context)
+            created_templates, many=True, context=self.context)
         return serializer.data
 
     class Meta:
@@ -36,7 +38,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "url",
             "id",
             "username",
-            "templates"
+            "created_templates"
         ]
 
 
@@ -46,7 +48,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
-    users = UserSerializer(many=True, read_only=True)
     creator = serializers.HyperlinkedRelatedField(
         many=False,
         view_name="user-detail",
@@ -69,12 +70,26 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
             return creator.username
         return None
 
+    # Subscriber names
+    subscriber_usernames = serializers.SerializerMethodField()
+
+    def get_subscriber_usernames(self, obj):
+        subscribers = obj.subscribers
+        subscriber_usernames = []
+        for subscriber in subscribers.all():
+            if subscriber is not None:
+                subscriber_usernames.append(subscriber.username)
+            else:
+                subscriber_usernames.append(None)
+        return subscriber_usernames
+
     class Meta:
         model = Template
         fields = [
             "url",
             "id",
-            "users",
+            "subscribers",
+            "subscriber_usernames",
             "name",
             "description",
             "option_1",

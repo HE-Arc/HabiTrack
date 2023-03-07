@@ -3,6 +3,15 @@ from .serializers import UserSerializer, TemplateSerializer
 from rest_framework import generics
 from .models import Template
 from rest_framework import viewsets
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Template
+
+# Annotations
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
+
 # from django.shortcuts import render
 # from rest_framework.response import Response
 # from rest_framework.decorators import api_view
@@ -27,7 +36,6 @@ from rest_framework import viewsets
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
-    
 
     # No actions needed for the moment
 
@@ -37,3 +45,19 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
     # No actions needed for the moment
+
+# Subscription logic
+
+# TODO Uncomment when login is implemented
+# @login_required
+
+
+@csrf_exempt
+def subscribe_to_template(request, template_id):
+    template = get_object_or_404(Template, id=template_id)
+    # TODO Once login is implemented, add user to the template
+    # user = request.user
+    # template.subscriptions.add(user)
+    # For now we add the user with id 1
+    template.subscribers.add(User.objects.get(id=1))
+    return JsonResponse({'success': True})

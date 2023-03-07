@@ -1,13 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
+###########################################################################
+# Template
 
 
 class Template(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=2000, blank=True)
-    user = models.ManyToManyField(User, related_name="templates", blank=True)
+    subscribers = models.ManyToManyField(
+        User, related_name="templates", blank=True)
 
     option_1 = models.CharField(max_length=30)
     option_2 = models.CharField(max_length=30)
