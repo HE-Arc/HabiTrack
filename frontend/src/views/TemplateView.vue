@@ -86,7 +86,7 @@ onMounted(() => {
     />
 
     <!--END TEMPORARY ELEMENTS-->
-    <div class="q-pa-md items-start q-gutter-md">
+    <div class="q-gutter-xs">
       <q-card
         class="template-card q-pa-sm"
         style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
@@ -103,19 +103,19 @@ onMounted(() => {
           <div class="text-h6">{{ template.description }}</div>
         </q-card-section>
 
-        <q-card-section class="text-center">
+        <q-card-section class="text-left">
           <div class="text-h6">{{ template.option_1 }}</div>
         </q-card-section>
 
-        <q-card-section class="text-center">
+        <q-card-section class="text-left">
           <div class="text-h6">{{ template.option_2 }}</div>
         </q-card-section>
 
-        <q-card-section class="text-center">
+        <q-card-section class="text-left">
           <div class="text-h6">{{ template.option_3 }}</div>
         </q-card-section>
 
-        <q-card-section class="text-center">
+        <q-card-section class="text-left">
           <div class="text-h6">{{ template.option_4 }}</div>
         </q-card-section>
 
