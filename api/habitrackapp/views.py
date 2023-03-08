@@ -52,7 +52,8 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     # user = request.user
     # template.subscriptions.add(user)
     # For now we add the user with id 1
-    user = User.objects.get(id=1)
+    #! IMPORTANT None can be replaced by User.objects.get(id=1) but only once migrations are done!
+    user = None
     queryset = Template.objects.filter(subscribers=user)
     serializer_class = TemplateSerializer
 
