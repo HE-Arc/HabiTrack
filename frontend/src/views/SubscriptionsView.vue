@@ -9,7 +9,7 @@ const templates = ref([]);
 // eslint-disable-next-line no-unused-vars
 const fetchTemplates = async () => {
   // only get user's templates
-  const result = await axios.get(`/templates/?user=${currentUser.value.id}`);
+  const result = await axios.get("/subscriptions");
   templates.value = result.data;
 };
 
