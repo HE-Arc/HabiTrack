@@ -20,7 +20,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-page padding>
+  <q-page>
     <ErrorBanner :errors="errors" />
 
     <q-btn
@@ -35,10 +35,8 @@ onMounted(async () => {
 
     <div class="q-pa-md items-start q-gutter-md">
       <q-card
-        class="template-card q-pa-sm"
         style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        v-for="(template, index) in templates"
-        :key="index"
+        class="template-card q-ma-sm"
         flat
         bordered
       >
@@ -116,5 +114,6 @@ onMounted(async () => {
 .template-card
   width: 100%
   height: 100%
-  max-width: 20rem
+  min-width: 20rem
+  max-width: 25rem
 </style>
