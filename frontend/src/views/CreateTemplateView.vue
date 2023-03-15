@@ -1,3 +1,4 @@
+<!-- eslint-disable prettier/prettier -->
 <script setup>
 import { ref, onMounted } from "vue";
 import { getCurrentUser } from "@/utils/auth.js";
@@ -52,6 +53,7 @@ onMounted(async () => {
             <div class="text-h5">Create a new template</div>
           </q-card-section>
 
+          <!--100-2000-30-30-30-30-->
           <q-card-section>
             <q-input
               v-model="name"
@@ -59,6 +61,10 @@ onMounted(async () => {
               filled
               stack-label
               class="q-mb-md"
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 100 || 'Size limit is 100',
+              ]"
             />
 
             <q-input
@@ -68,6 +74,11 @@ onMounted(async () => {
               stack-label
               type="textarea"
               class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 2000 || 'Size limit is 2000',
+              ]"
             />
 
             <q-input
@@ -76,6 +87,11 @@ onMounted(async () => {
               square
               outlined
               class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 30 || 'Size limit is 30',
+              ]"
             />
 
             <q-input
@@ -84,6 +100,11 @@ onMounted(async () => {
               outlined
               square
               class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 30 || 'Size limit is 30',
+              ]"
             />
 
             <q-input
@@ -92,6 +113,11 @@ onMounted(async () => {
               outlined
               square
               class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 30 || 'Size limit is 30',
+              ]"
             />
 
             <q-input
@@ -100,6 +126,11 @@ onMounted(async () => {
               outlined
               square
               class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 30 || 'Size limit is 30',
+              ]"
             />
           </q-card-section>
 
@@ -110,7 +141,7 @@ onMounted(async () => {
           >
             <div class="text-h6">
               <q-icon left size="md" name="mdi-check-circle-outline" />
-              New template successfully created!
+              New template created successfully!
             </div>
           </q-banner>
 

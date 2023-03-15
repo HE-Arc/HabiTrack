@@ -42,16 +42,16 @@ onMounted(async () => {
       >
         <q-card
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-          class="template-card q-ma-sm"
+          class="template-card q-ma-sm stretch-items"
           flat
           bordered
         >
           <q-card-section class="text-center">
-            <div class="text-h5">{{ template.name }}</div>
+            <div class="text-h5 ellipsis">{{ template.name }}</div>
           </q-card-section>
 
           <q-card-section class="text-center">
-            <div class="text-h6">{{ template.description }}</div>
+            <div class="q-body-1">{{ template.description }}</div>
           </q-card-section>
 
           <q-card-section class="text-left">
