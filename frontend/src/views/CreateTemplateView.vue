@@ -48,78 +48,78 @@ onMounted(async () => {
               </q-btn>
             </q-card-section>
 
-            <q-card-section class="text-center">
-              <div class="text-h5">Create a new template</div>
-            </q-card-section>
+          <q-card-section class="text-center">
+            <div class="text-h5">Create a new template</div>
+          </q-card-section>
 
-            <q-card-section>
-              <q-input
-                v-model="name"
-                label="Name"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+          <q-card-section>
+            <q-input
+              v-model="name"
+              label="Name"
+              filled
+              stack-label
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="description"
-                label="Description"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="description"
+              label="Description"
+              filled
+              stack-label
+              type="textarea"
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_1"
-                label="Option 1"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="option_1"
+              label="Option 1"
+              square
+              outlined
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_2"
-                label="Option 2"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="option_2"
+              label="Option 2"
+              outlined
+              square
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_3"
-                label="Option 3"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="option_3"
+              label="Option 3"
+              outlined
+              square
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_4"
-                label="Option 4"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
-            </q-card-section>
+            <q-input
+              v-model="option_4"
+              label="Option 4"
+              outlined
+              square
+              class="q-mb-md"
+            />
+          </q-card-section>
 
-            <q-banner
-              v-if="success"
-              inline-actions
-              class="q-mb-lg text-white bg-green"
-            >
-              <div class="text-h6">
-                <q-icon left size="md" name="mdi-check-circle-outline" />
-                New template successfully created!
-              </div>
-            </q-banner>
+          <q-banner
+            v-if="success"
+            inline-actions
+            class="q-mb-lg text-white bg-green"
+          >
+            <div class="text-h6">
+              <q-icon left size="md" name="mdi-check-circle-outline" />
+              New template successfully created!
+            </div>
+          </q-banner>
 
-            <q-card-section class="q-gutter-y-sm">
-              <div class="text-center">
-                <q-btn type="submit" color="primary" label="Submit" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
+          <q-card-section class="q-gutter-y-sm">
+            <div class="text-center">
+              <q-btn type="submit" color="primary" label="Submit" />
+            </div>
+          </q-card-section>
+        </q-card>
       </div>
     </q-form>
   </q-page>

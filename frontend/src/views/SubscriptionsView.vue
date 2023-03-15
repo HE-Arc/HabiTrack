@@ -42,22 +42,22 @@ onMounted(async () => {
               <div class="text-h6">{{ template.option_2 }}</div>
             </q-card-section>
 
-            <q-card-section class="text-left">
-              <div class="text-h6">{{ template.option_3 }}</div>
-            </q-card-section>
+          <q-card-section class="text-left">
+            <div class="text-h6">{{ template.option_3 }}</div>
+          </q-card-section>
 
-            <q-card-section class="text-left">
-              <div class="text-h6">{{ template.option_4 }}</div>
-            </q-card-section>
+          <q-card-section class="text-left">
+            <div class="text-h6">{{ template.option_4 }}</div>
+          </q-card-section>
 
-            <q-card-section class="text-center">
-              <div class="text-h6">
-                Created by: {{ template.creator_username }}
-              </div>
-            </q-card-section>
+          <q-card-section class="text-center">
+            <div class="text-h6">
+              Created by: {{ template.creator_username }}
+            </div>
+          </q-card-section>
 
-            <!-- TODO unsubscribe -->
-            <!--<q-card-actions vertical>
+          <!-- TODO unsubscribe -->
+          <!--<q-card-actions vertical>
                   <q-btn
                     push
                     @click="unscubscribeTemplate(template)"
@@ -69,8 +69,7 @@ onMounted(async () => {
                   </q-btn>
                 </q-card-actions>
                 >-->
-          </q-card>
-        </div>
+        </q-card>
       </div>
     </div>
   </q-page>
