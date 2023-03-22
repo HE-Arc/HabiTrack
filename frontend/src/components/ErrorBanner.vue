@@ -18,7 +18,6 @@ const props = defineProps({
     <q-separator dark class="q-my-md" inset />
 
     <div class="self-center" v-for="(item, key) in props.errors" :key="key">
-      {{ key }}
       <ul>
         <li v-for="(err, index) in item" :key="index">{{ err }}</li>
       </ul>

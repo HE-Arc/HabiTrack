@@ -11,6 +11,17 @@ from .models import Template
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
+# Authentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+# ExempleViewSet(viewsets.ModelViewSet):
+#     authentication_classes = [SessionAuthentication]
+#     permission_classes = [IsAuthenticated]f
+
 
 # from django.shortcuts import render
 # from rest_framework.response import Response
@@ -19,30 +30,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-# TODO Remove, help for the understanding of CaffeinItemViewSet
-# @api_view(["GET", "POST"])
-# def template_list(request):
-#     if request.method == "GET":
-#         templates = Template.objetcs.all()
-#         serializer = TemplateSerializer(templates, many=True)
-#         return Response(serializer.data)
-#     elif request.method == "POST":
-#         serializer = TemplateSerializer(templates)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
-
-    # No actions needed for the moment
-
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
     # No actions needed for the moment
 
@@ -56,6 +51,55 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     user = None
     queryset = Template.objects.filter(subscribers=user)
     serializer_class = TemplateSerializer
+
+
+# Authentication
+class SessionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response({'isAuthenticated': True})
+        else:
+            return Response({'isAuthenticated': False})
+
+
+class LoginView(APIView):
+    def post(self, request):
+        data = request.data
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return Response({'success': 'Login Successful'})
+
+        return Response({'error': 'Wrong Credentials'})
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged in'})
+
+        logout(request)
+        return Response({'success': 'Logout Successful'})
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class AuthUserView(generics.RetrieveAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 # Subscription logic
 

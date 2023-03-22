@@ -18,15 +18,14 @@ router.register("users",
 router.register("subscriptions",
                 views.SubscriptionViewSet)
 
+
 urlpatterns = [
-    # TODO Remove
-    # path("users/", views.UserList.as_view(), name="user-list"),
-    # path(
-    #    "users/<int:pk>/",
-    #    views.UserDetail.as_view(),
-    #    name="user-detail",
-    # ),
     path("", include(router.urls)),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('session/', views.SessionView.as_view(), name='session'),
+    path('auth_user/', views.AuthUserView.as_view(), name='auth_user'),
 
     path('templates/subscribe/<int:template_id>/',
          views.subscribe_to_template, name='subscribe_to_template'),

@@ -21,8 +21,14 @@ const fetchUsers = async () => {
   users.value = (await axios.get("/users/")).data;
 };
 
+const fetchAuthedUser = async () => {
+  const result = await axios.get("/authed_user/");
+  currentUser.value = result.data;
+};
+
 onMounted(() => {
-  fetchUsers();
+  //fetchUsers();
+  fetchAuthedUser();
 });
 </script>
 
@@ -32,14 +38,17 @@ onMounted(() => {
       <ErrorBanner :errors="errors" />
 
       <!-- TODO: Get current user -->
-      <q-select
+      <!-- <q-select
         v-model="currentUser"
         option-value="id"
         option-label="username"
         :options="users"
         label="Select a user that will be the creator of the template"
         outlined
-      />
+      />-->
+
+      <!-- Show current user's username -->
+      <div class="text-h5">Current user: {{ currentUser.username }}</div>
 
       <q-btn color="primary" @click="fetchTemplates()">
         <q-icon left size="xl" name="mdi-plus-box" />
