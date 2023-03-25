@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'corsheaders'
 ]
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
@@ -64,6 +66,8 @@ CORS_ALLOWED_ORIGINS = [
     os.getenv("LOCALHOST_IP"),
     os.getenv("SERVER_URL")
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'habitrack.urls'
 

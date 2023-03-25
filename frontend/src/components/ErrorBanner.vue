@@ -8,7 +8,7 @@ const props = defineProps({
   <q-banner
     v-if="props.errors"
     inline-actions
-    class="q-mb-lg text-white bg-red"
+    class="q-ma-md text-white bg-red"
   >
     <div class="text-h6">
       <q-icon left size="md" name="mdi-alert" />
@@ -17,10 +17,13 @@ const props = defineProps({
 
     <q-separator dark class="q-my-md" inset />
 
-    <div class="self-center" v-for="(item, key) in props.errors" :key="key">
-      <ul>
-        <li v-for="(err, index) in item" :key="index">{{ err }}</li>
+    <div class="self-center">
+      <ul v-if="Array.isArray(props.errors)">
+        <li v-for="(err, index) in props.errors.flat()" :key="index">
+          {{ err }}
+        </li>
       </ul>
+      <div v-else>{{ props.errors }}</div>
     </div>
   </q-banner>
 </template>

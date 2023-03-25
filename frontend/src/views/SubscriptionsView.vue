@@ -3,32 +3,26 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import ErrorBanner from "../components/ErrorBanner.vue";
 
-const currentUser = ref(null);
 const templates = ref([]);
 
 // eslint-disable-next-line no-unused-vars
-const fetchTemplates = async () => {
-  // only get user's templates
-  const result = await axios.get("/subscriptions");
-  templates.value = result.data;
-};
-
-// Fecth all User from DB
-
-const users = ref([]);
-
-const fetchUsers = async () => {
-  users.value = (await axios.get("/users/")).data;
-};
-
-const fetchAuthedUser = async () => {
-  const result = await axios.get("/authed_user/");
-  currentUser.value = result.data;
+const fetchSubscriptions = async () => {
+  axios
+    .get("subscriptions/", {
+      withCredentials: true,
+    })
+    .then((response) => {
+      if (response.data.success) {
+        templates.value = response.data.templates;
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 onMounted(() => {
-  //fetchUsers();
-  fetchAuthedUser();
+  fetchSubscriptions();
 });
 </script>
 
@@ -36,24 +30,6 @@ onMounted(() => {
   <div class="q-gutter-md">
     <q-page>
       <ErrorBanner :errors="errors" />
-
-      <!-- TODO: Get current user -->
-      <!-- <q-select
-        v-model="currentUser"
-        option-value="id"
-        option-label="username"
-        :options="users"
-        label="Select a user that will be the creator of the template"
-        outlined
-      />-->
-
-      <!-- Show current user's username -->
-      <div class="text-h5">Current user: {{ currentUser.username }}</div>
-
-      <q-btn color="primary" @click="fetchTemplates()">
-        <q-icon left size="xl" name="mdi-plus-box" />
-        <div>Fetch subscriptions TEMPORARY</div>
-      </q-btn>
 
       <div class="row">
         <div

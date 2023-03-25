@@ -27,24 +27,23 @@ const errors = ref(null);
 
 // Allow subscription to a new Template
 const submit = async (template) => {
-  // set CSRF token as header
-  // TODO - may need this for later so leaving it here...
-  const csrfToken = Cookies.get("csrftoken");
-  const headers = {
-    "X-CSRFToken": csrfToken,
-  };
+  const response = await axios.post(`/templates/subscribe/${template.id}/`, {
+    headers: {
+      "X-CSRFToken": Cookies.get("csrftoken"),
+    },
+  });
 
-  // make POST request with headers
-  axios
-    .post(`/templates/subscribe/${template.id}/`, {}, { headers })
-    .then((response) => {
-      // handle success response
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // handle error response
-      console.error(error);
+  // if the response is successful, update local array
+  if (response.data.success) {
+    templates.value = templates.value.map((t) => {
+      if (t.id === template.id) {
+        return response.data.template;
+      }
+      return t;
     });
+  } else {
+    errors.value = response.data.error;
+  }
 };
 
 const deleteTemplate = async (template) => {

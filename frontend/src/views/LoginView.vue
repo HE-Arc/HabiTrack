@@ -2,6 +2,7 @@
 import axios from "axios";
 import { ref } from "vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
+
 const success = ref(false);
 const errors = ref(null);
 const username = ref("");
@@ -9,34 +10,40 @@ const password = ref("");
 
 // Submit user login
 const submit = async () => {
-  try {
-    const response = await axios.post("/login/", {
-      username: username.value,
-      password: password.value,
-    });
-
-    if (response.data.error) {
-      errors.value = response.data.error;
-      return;
-    }
-    if (response.data.success) {
-      success.value = true;
-      setTimeout(() => {
-        window.location.href = "/subscriptions/";
-      }, 1000);
-    }
-  } catch (err) {
-    success.value = false;
-    errors.value = err.response.data;
+  if (!username.value || !password.value) {
+    errors.value = ["Please enter a username and password"];
+    return;
   }
+  axios
+    .post(
+      "login/",
+      {
+        username: username.value,
+        password: password.value,
+      },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((response) => {
+      if (response.data.success) {
+        setTimeout(() => {
+          window.location.href = "/subscriptions/";
+        }, 1000);
+      } else {
+        errors.value = [response.data.error];
+      }
+    })
+    .catch((error) => {
+      errors.value = error.response.data;
+    });
 };
 </script>
 <template>
   <q-page>
-    <ErrorBanner :errors="errors" />
     <q-form class="" @submit="submit()">
       <div>
-        <div class="q-mt-md">
+        <div class="q-ma-md">
           <q-card>
             <q-card-section class="">
               <q-btn color="primary" :to="{ name: 'templates' }">
@@ -79,6 +86,7 @@ const submit = async () => {
                 Login successful!
               </div>
             </q-banner>
+            <ErrorBanner :errors="errors" />
 
             <q-card-section class="q-gutter-y-sm">
               <div class="text-center">

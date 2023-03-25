@@ -17,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import redirect
 
 # ExempleViewSet(viewsets.ModelViewSet):
 #     authentication_classes = [SessionAuthentication]
@@ -43,37 +44,28 @@ class TemplateViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    # TODO Once login is implemented, add user to the template
-    # user = request.user
-    # template.subscriptions.add(user)
-    # For now we add the user with id 1
-    #! IMPORTANT None can be replaced by User.objects.get(id=1) but only once migrations are done!
-    user = None
-    queryset = Template.objects.filter(subscribers=user)
+    queryset = Template.objects.all()
     serializer_class = TemplateSerializer
 
 
+
 # Authentication
-class SessionView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        if request.user.is_authenticated:
-            return Response({'isAuthenticated': True})
-        else:
-            return Response({'isAuthenticated': False})
-
 
 class LoginView(APIView):
     def post(self, request):
-        data = request.data
-        username = data.get('username')
-        password = data.get('password')
-        user = authenticate(username=username, password=password)
+        if (request.user.is_authenticated):
+            # Redirect home
+            redirect('home')
+            return Response({'error': 'User already logged in'})
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request=request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return Response({'success': 'Login Successful'})
-
+            if user.is_authenticated:
+                return Response({'success': 'Login Successful'})
+            else:
+                return Response({'error': 'User not authenticated'})
         return Response({'error': 'Wrong Credentials'})
 
 
@@ -98,8 +90,21 @@ class AuthUserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def get_object(self):
+    def get(self):
         return self.request.user
+    
+    
+class CurrentUserView(APIView):
+    def get(self, request):
+        print("Current user: ", request.user)
+        user = request.user
+        if user.is_authenticated:
+            return Response({
+                'success': 'User logged in',
+                'username': user.username,
+                'id': user.id,})
+        else:
+            return Response({'error': 'User not logged in'})
 
 # Subscription logic
 
@@ -107,12 +112,18 @@ class AuthUserView(generics.RetrieveAPIView):
 # @login_required
 
 
-@csrf_exempt
 def subscribe_to_template(request, template_id):
     template = get_object_or_404(Template, id=template_id)
-    # TODO Once login is implemented, add user to the template
-    # user = request.user
-    # template.subscriptions.add(user)
-    # For now we add the user with id 1
-    template.subscribers.add(User.objects.get(id=1))
+    template.subscribers.add(request.user)
     return JsonResponse({'success': True})
+
+def get_user_subscriptions(request):
+    user = request.user
+    if user.is_authenticated:
+        return JsonResponse({
+            'success': True,
+            'subscriptions': [template.id for template in user.subscriptions.all()]
+        })
+    else:
+        return JsonResponse({'error': 'User not logged in'})
+   
