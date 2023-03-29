@@ -6,6 +6,9 @@ from rest_framework import viewsets
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Template
+from rest_framework.decorators import action
+from django.utils.decorators import method_decorator
+
 
 # Annotations
 from django.contrib.auth.decorators import login_required
@@ -35,6 +38,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @method_decorator(login_required)
+    @action(detail=True, methods=['post'], url_path=r"subscribe/(?P<template_id>\d+)")
+    def subscribe(self, request, pk=None, template_id=None):
+        template = get_object_or_404(Template, id=template_id)
+        template.subscribers.add(User.objects.get(id=pk))
+        return Response({'success': True})
+
+    @method_decorator(login_required)
+    @action(detail=True, methods=['post'], url_path=r"unsubscribe/(?P<template_id>\d+)")
+    def unsubscribe(self, request, pk=None, template_id=None):
+        template = get_object_or_404(Template, id=template_id)
+        template.subscribers.remove(User.objects.get(id=pk))
+        return Response({'success': True})
+
 
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
@@ -47,6 +64,26 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
 
+    @action(detail=True, methods=['post'])
+    def get_subscriptions(self):
+        user = self.request.user
+        if user.is_authenticated:
+            return JsonResponse({
+                'success': True,
+                # View can fetch each template's data
+                'subscriptions': [template.id for template in user.subscriptions.all()]
+            })
+        else:
+            return JsonResponse({'error': 'User not logged in'})
+
+    @action(detail=True, methods=['post'])
+    def get_subscribers(self, request, template_id):
+        template = get_object_or_404(Template, id=template_id)
+        return JsonResponse({
+            'success': True,
+            # View can fetch each user's data
+            'subscribers': [user.id for user in template.subscribers.all()]
+        })
 
 
 # Authentication
@@ -59,7 +96,8 @@ class LoginView(APIView):
             return Response({'error': 'User already logged in'})
         username = request.data.get('username')
         password = request.data.get('password')
-        user = authenticate(request=request, username=username, password=password)
+        user = authenticate(
+            request=request, username=username, password=password)
         if user is not None:
             login(request, user)
             if user.is_authenticated:
@@ -90,40 +128,18 @@ class AuthUserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def get(self):
-        return self.request.user
-    
-    
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        return request.user.id
+
+
 class CurrentUserView(APIView):
     def get(self, request):
-        print("Current user: ", request.user)
         user = request.user
         if user.is_authenticated:
             return Response({
                 'success': 'User logged in',
-                'username': user.username,
-                'id': user.id,})
+                'user': user
+            })
         else:
             return Response({'error': 'User not logged in'})
-
-# Subscription logic
-
-# TODO Uncomment when login is implemented
-# @login_required
-
-
-def subscribe_to_template(request, template_id):
-    template = get_object_or_404(Template, id=template_id)
-    template.subscribers.add(request.user)
-    return JsonResponse({'success': True})
-
-def get_user_subscriptions(request):
-    user = request.user
-    if user.is_authenticated:
-        return JsonResponse({
-            'success': True,
-            'subscriptions': [template.id for template in user.subscriptions.all()]
-        })
-    else:
-        return JsonResponse({'error': 'User not logged in'})
-   

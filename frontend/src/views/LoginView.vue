@@ -64,6 +64,10 @@ const submit = async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
 
               <q-input
@@ -73,6 +77,10 @@ const submit = async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
             </q-card-section>
 

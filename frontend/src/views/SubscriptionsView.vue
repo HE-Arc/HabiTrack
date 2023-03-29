@@ -2,6 +2,7 @@
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import ErrorBanner from "../components/ErrorBanner.vue";
+import Cookies from "js-cookie";
 
 const templates = ref([]);
 
@@ -9,8 +10,11 @@ const templates = ref([]);
 const fetchSubscriptions = async () => {
   axios
     .get("subscriptions/", {
+      headers: {
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
       withCredentials: true,
-    })
+    }) // THIS IS WRONG
     .then((response) => {
       if (response.data.success) {
         templates.value = response.data.templates;
@@ -28,7 +32,7 @@ onMounted(() => {
 
 <template>
   <div class="q-gutter-md">
-    <q-page>
+    <q-page></q-page>
       <ErrorBanner :errors="errors" />
 
       <div class="row">

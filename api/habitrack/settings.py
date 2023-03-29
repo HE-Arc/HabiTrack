@@ -28,10 +28,6 @@ SECRET_KEY = 'django-insecure-4g$(68ha@b!ue9fq7$re4qqlk!98oyzjg5i50y_u(o(ig9)c&e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['habi-track.k8s.ing.he-arc.ch',
-                 'localhost',
-                 '127.0.0.1']
-
 
 # Application definition
 
@@ -62,6 +58,12 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
+    os.getenv("LOCALHOST_URL"),
+    os.getenv("LOCALHOST_IP"),
+    os.getenv("SERVER_URL")
+]
+
+CSRF_TRUSTED_ORIGINS = [
     os.getenv("LOCALHOST_URL"),
     os.getenv("LOCALHOST_IP"),
     os.getenv("SERVER_URL")

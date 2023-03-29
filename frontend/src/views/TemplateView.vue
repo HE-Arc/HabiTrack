@@ -13,37 +13,48 @@ const fetchTemplates = async () => {
   templates.value = result.data;
 };
 
-// Fecth all User from DB
-
-const users = ref([]);
-const currentUser = ref(null);
-
-const fetchUsers = async () => {
-  users.value = (await axios.get("/users/")).data;
-};
+let user = ref(null);
 
 // We need error handling
 const errors = ref(null);
 
-// Allow subscription to a new Template
-const submit = async (template) => {
-  const response = await axios.post(`/templates/subscribe/${template.id}/`, {
-    headers: {
-      "X-CSRFToken": Cookies.get("csrftoken"),
-    },
-  });
+const fetchCurrentUser = async () => {
+  const result = await axios.get("/current_user/");
+  user.value = result.data.user;
+  console.log(user);
+};
 
-  // if the response is successful, update local array
-  if (response.data.success) {
-    templates.value = templates.value.map((t) => {
-      if (t.id === template.id) {
-        return response.data.template;
-      }
-      return t;
+// Allow subscription to a new Template
+const subscribe = async (template) => {
+  console.log(Cookies.get("csrftoken"));
+  await axios
+    .post(`/users/${user_id}/subscribe/${template.id}/`, {})
+    .then((response) => {
+      // handle success response
+      fetchTemplates();
+
+      console.log(response.data);
+    })
+    .catch((error) => {
+      // handle error response
+      console.error(error);
     });
-  } else {
-    errors.value = response.data.error;
-  }
+};
+
+// Allow unsubscription from a Template
+const unsubscribe = async (template) => {
+  await axios
+    .post(`/users/${user.value.id}/unsubscribe/${template.id}/`, {})
+    .then((response) => {
+      // handle success response
+      fetchTemplates();
+
+      console.log(response.data);
+    })
+    .catch((error) => {
+      // handle error response
+      console.error(error);
+    });
 };
 
 const deleteTemplate = async (template) => {
@@ -60,31 +71,20 @@ const deleteTemplate = async (template) => {
 };
 
 onMounted(() => {
+  fetchCurrentUser();
   fetchTemplates();
-  fetchUsers();
 });
 </script>
 
 <template>
   <q-page padding>
     <ErrorBanner :errors="errors" />
-    <!--START TEMPORARY ELEMENTS-->
 
     <q-btn id="add_template" color="primary" :to="{ name: 'templates.create' }">
       <q-icon left name="mdi-plus-box" />
       <q-label for="add_template">Create a new template</q-label>
     </q-btn>
 
-    <q-select
-      id="user_select"
-      v-model="currentUser"
-      option-value="id"
-      option-label="username"
-      :options="users"
-      label="Select a user to subscribe them to a template"
-    />
-
-    <!--END TEMPORARY ELEMENTS-->
     <div class="q-pa-md items-start q-gutter-md">
       <q-card
         class="template-card q-pa-sm"
@@ -122,10 +122,25 @@ onMounted(() => {
           <div class="text-h6">Created by: {{ template.creator_username }}</div>
         </q-card-section>
 
-        <q-card-actions vertical>
+        <q-card-actions
+          vertical
+          v-if="template.subscribers.includes(user.value)"
+        >
           <q-btn
             push
-            @click="submit(template)"
+            @click="unsubscribe(template)"
+            color="red"
+            label="Unsubscribe"
+            dense
+          >
+            <q-icon size="md" name="mdi-numeric-negative-1" />
+          </q-btn>
+        </q-card-actions>
+
+        <q-card-actions vertical v-else>
+          <q-btn
+            push
+            @click="subscribe(template)"
             color="secondary"
             label="Subscribe"
             dense
@@ -133,7 +148,6 @@ onMounted(() => {
             <q-icon size="md" name="mdi-numeric-positive-1" />
           </q-btn>
         </q-card-actions>
-
         <q-card-actions vertical>
           <q-btn
             push

@@ -16,6 +16,17 @@ from django.contrib.auth.password_validation import validate_password
 #############################################################
 
 
+class SimpleUserSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            "url",
+            "id",
+            "username",
+        ]
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     # Creations
@@ -33,12 +44,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             created_templates, many=True, context=self.context)
         return serializer.data
 
+    # TODO : fix this
+
     class Meta:
         model = User
-        fields = [
-            "url",
-            "id",
-            "username",
+        fields = SimpleUserSerializer.Meta.fields + [
             "created_templates"
         ]
 
@@ -70,6 +80,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         else:
             return serializers.ValidationError(self.errors)
 
+#############################################################
+#                    Subscribe Serializer                    #
+#############################################################
+
+
+# class SubscriberSerializer(serializers.HyperlinkedModelSerializer):
 
 #############################################################
 #                    Template Serializer                    #
@@ -77,54 +93,27 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
-    creator = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name="user-detail",
-        queryset=User.objects.all(),
-        allow_null=True,
-        required=False,
-        default=serializers.CurrentUserDefault()
+
+    subscribers = UserSerializer(
+        many=True,
+        read_only=True
     )
 
-    # SerializerMethodField is a read-only field that get its
-    # representation from calling a method on the parent serializer class.
-    # The method called will be of the form "get_{field_name}", and should take a single
-    # argument, which is the object being serialized.
-    creator_username = serializers.SerializerMethodField()
-
-    # This function is used to get the username of the creator
-    def get_creator_username(self, obj):
-        creator = obj.creator
-        if creator is not None:
-            return creator.username
-        return None
-
-    # Subscriber names
-    subscriber_usernames = serializers.SerializerMethodField()
-
-    def get_subscriber_usernames(self, obj):
-        subscribers = obj.subscribers
-        subscriber_usernames = []
-        for subscriber in subscribers.all():
-            if subscriber is not None:
-                subscriber_usernames.append(subscriber.username)
-            else:
-                subscriber_usernames.append(None)
-        return subscriber_usernames
+    creator = SimpleUserSerializer(
+        read_only=True
+    )
 
     class Meta:
         model = Template
         fields = [
             "url",
             "id",
-            "subscribers",
-            "subscriber_usernames",
             "name",
+            "subscribers",
             "description",
             "option_1",
             "option_2",
             "option_3",
             "option_4",
-            "creator",
-            "creator_username"
+            "creator"
         ]

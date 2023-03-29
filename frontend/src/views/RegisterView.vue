@@ -38,6 +38,11 @@ const submit = async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => val.length < 30 || 'Size limit is 30',
+                ]"
               />
 
               <q-input
@@ -47,6 +52,10 @@ const submit = async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
               <q-input
                 v-model="password_again"
@@ -55,6 +64,10 @@ const submit = async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
             </q-card-section>
 
