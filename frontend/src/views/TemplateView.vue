@@ -20,7 +20,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-page>
+  <q-page padding>
     <ErrorBanner :errors="errors" />
 
     <q-btn
@@ -35,40 +35,36 @@ onMounted(async () => {
 
     <div class="q-pa-md items-start q-gutter-md">
       <q-card
+        class="template-card q-pa-sm"
         style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        class="template-card q-ma-sm"
+        v-for="(template, index) in templates"
+        :key="index"
         flat
         bordered
       >
-        <q-card
-          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-          class="template-card q-ma-sm stretch-items"
-          flat
-          bordered
-        >
-          <q-card-section class="text-center">
-            <div class="text-h5 ellipsis">{{ template.name }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h5">{{ template.name }}</div>
+        </q-card-section>
 
-          <q-card-section class="text-center">
-            <div class="q-body-1">{{ template.description }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.description }}</div>
+        </q-card-section>
 
-          <q-card-section class="text-left">
-            <div class="text-h6">{{ template.option_1 }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_1 }}</div>
+        </q-card-section>
 
-          <q-card-section class="text-left">
-            <div class="text-h6">{{ template.option_2 }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_2 }}</div>
+        </q-card-section>
 
-          <q-card-section class="text-left">
-            <div class="text-h6">{{ template.option_3 }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_3 }}</div>
+        </q-card-section>
 
-          <q-card-section class="text-left">
-            <div class="text-h6">{{ template.option_4 }}</div>
-          </q-card-section>
+        <q-card-section class="text-center">
+          <div class="text-h6">{{ template.option_4 }}</div>
+        </q-card-section>
 
         <q-card-section class="text-center">
           <div class="text-h6">Created by: {{ template.creator.username }}</div>
@@ -115,3 +111,10 @@ onMounted(async () => {
     </div>
   </q-page>
 </template>
+
+<style lang="sass" scoped>
+.template-card
+  width: 100%
+  height: 100%
+  max-width: 20rem
+</style>
