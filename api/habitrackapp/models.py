@@ -19,3 +19,16 @@ class Template(models.Model):
     creator = models.ForeignKey(
         User, related_name="created_templates", on_delete=models.CASCADE, blank=True, null=True)
     # TODO isPublic = models.models.BooleanField(_("True"))
+
+
+###########################################################################
+# Subscription
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'template')

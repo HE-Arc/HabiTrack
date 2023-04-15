@@ -1,13 +1,19 @@
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, TemplateSerializer
 from rest_framework import generics
-from .models import Template
 from rest_framework import viewsets
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Template
 from rest_framework.decorators import action
 from django.utils.decorators import method_decorator
+
+# Models
+from .models import Template, Subscription
+
+# Serializers
+from .serializers import SimpleUserSerializer, UserSerializer
+from .serializers import SimpleTemplateSerializer, TemplateSerializer
+from .serializers import SubscriptionSerializer
 
 
 # Annotations
@@ -22,17 +28,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import redirect
 
-# ExempleViewSet(viewsets.ModelViewSet):
-#     authentication_classes = [SessionAuthentication]
-#     permission_classes = [IsAuthenticated]f
-
-
-# from django.shortcuts import render
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
-# from rest_framework import status
-
-# Create your views here.
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
@@ -52,6 +47,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         template.subscribers.remove(User.objects.get(id=pk))
         return Response({'success': True})
 
+    @action(detail=False, methods=['get'], url_path=r"current")
+    def current(self, request):
+        user = request.user
+        if user.is_authenticated:
+            serializer = SimpleUserSerializer(user)
+            return Response({
+                'success': 'User logged in',
+                'user': serializer.data
+            })
+        else:
+            return Response({'error': 'User not logged in'})
+
 
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
@@ -61,38 +68,58 @@ class TemplateViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    queryset = Template.objects.all()
-    serializer_class = TemplateSerializer
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
 
-    @action(detail=True, methods=['post'])
-    def get_subscriptions(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return JsonResponse({
-                'success': True,
-                # View can fetch each template's data
-                'subscriptions': [template.id for template in user.subscriptions.all()]
-            })
-        else:
+    # TODO Check wether this is needed and correct
+    @action(detail=False, methods=['get'], url_path=r"user/(?P<user_id>\d+)")
+    def get_subscriptions(self, request, user_id=None):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'})
+
+        if not user.is_authenticated:
             return JsonResponse({'error': 'User not logged in'})
 
-    @action(detail=True, methods=['post'])
-    def get_subscribers(self, request, template_id):
-        template = get_object_or_404(Template, id=template_id)
+        subscriptions = Subscription.objects.filter(user=user)
+        subscription_data = []
+        for subscription in subscriptions:
+            template_data = SimpleTemplateSerializer(
+                subscription.template).data
+            subscription_data.append(template_data)
+
         return JsonResponse({
             'success': True,
-            # View can fetch each user's data
-            'subscribers': [user.id for user in template.subscribers.all()]
+            'subscriptions': subscription_data,
         })
 
+    # # TODO Check wether this is needed and correct
+    # @action(detail=True, methods=['post'])
+    # def get_subscribers(self, request, template_id):
+    #     template = get_object_or_404(Template, id=template_id)
+    #     return JsonResponse({
+    #         'success': True,
+    #         # View can fetch each user's data
+    #         'subscribers': [user.id for user in template.subscribers.all()]
+    #     })
 
-# Authentication
+    # Check wether a user is subscribed to a template
+    # @action(detail=True, methods=['get'], url_path=r"subscribed/(?P<template_id>\d+)")
+    # def subscribed(self, request, pk=None, template_id=None):
+    #     user = User.objects.get(id=pk)
+    #     template = get_object_or_404(Template, id=template_id)
+    #     return Response({
+    #         'success': True,
+    #         'subscribed': user in template.subscribers.all()
+    #     })
+
+    # Authentication
+
 
 class LoginView(APIView):
     def post(self, request):
         if (request.user.is_authenticated):
-            # Redirect home
-            redirect('home')
             return Response({'error': 'User already logged in'})
         username = request.data.get('username')
         password = request.data.get('password')
@@ -119,27 +146,3 @@ class LogoutView(APIView):
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-
-class AuthUserView(generics.RetrieveAPIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        return request.user.id
-
-
-class CurrentUserView(APIView):
-    def get(self, request):
-        user = request.user
-        if user.is_authenticated:
-            return Response({
-                'success': 'User logged in',
-                'user': user
-            })
-        else:
-            return Response({'error': 'User not logged in'})

@@ -1,6 +1,7 @@
 <script setup>
-import axios from "axios";
 import { ref, onMounted } from "vue";
+import { getCurrentUser } from "@/utils/auth.js";
+import { templateAction } from "@/utils/template.js";
 
 const success = ref(false);
 const errors = ref(null);
@@ -13,60 +14,30 @@ const option_2 = ref("");
 const option_3 = ref("");
 const option_4 = ref("");
 
-// Fecth all User from DB
-
-const users = ref([]);
-const currentUser = ref(null);
-
-const fetchUsers = async () => {
-  users.value = (await axios.get("/users/")).data;
-};
-
-// Submit new Template
-const submit = async () => {
-  try {
-    success.value = false;
-    errors.value = false;
-
-    // TODO: Check user login
-    // Somehow??
-    await axios.post("/templates/", {
-      // TODO: Get current user
-      creator: currentUser.value?.url,
-      name: name.value,
-      description: description.value,
-      option_1: option_1.value,
-      option_2: option_2.value,
-      option_3: option_3.value,
-      option_4: option_4.value,
-    });
-    success.value = true;
-  } catch (err) {
-    errors.value = true;
-  }
-};
+const user = ref(null);
 
 // Execute le code quand le composant démarre
-onMounted(() => {
-  fetchUsers();
+onMounted(async () => {
+  user.value = await getCurrentUser();
 });
 </script>
 
 <template>
   <q-page class="q-ma-auto" padding>
     <ErrorBanner :errors="errors" />
-
-    <!-- TODO: Get current user -->
-    <q-select
-      v-model="currentUser"
-      option-value="id"
-      option-label="username"
-      :options="users"
-      label="User"
-      outlined
-    />
-
-    <q-form class="" @submit="submit()">
+    <q-form
+      class=""
+      @submit="
+        templateAction('create', {
+          name,
+          description,
+          option_1,
+          option_2,
+          option_3,
+          option_4,
+        })
+      "
+    >
       <div>
         <div class="q-mt-md">
           <q-card>

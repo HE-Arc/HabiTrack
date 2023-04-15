@@ -1,38 +1,27 @@
 <script setup>
-import axios from "axios";
-import { ref, onMounted } from "vue";
 import ErrorBanner from "../components/ErrorBanner.vue";
-import Cookies from "js-cookie";
+import { ref, onMounted } from "vue";
+import { fetchSubscriptions } from "../utils/subscription";
+import { getCurrentUser } from "../utils/auth";
 
 const templates = ref([]);
+const user = ref(null);
+const errors = ref(null);
 
-// eslint-disable-next-line no-unused-vars
-const fetchSubscriptions = async () => {
-  axios
-    .get("subscriptions/", {
-      headers: {
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-      withCredentials: true,
-    }) // THIS IS WRONG
-    .then((response) => {
-      if (response.data.success) {
-        templates.value = response.data.templates;
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
-onMounted(() => {
-  fetchSubscriptions();
+onMounted(async () => {
+  user.value = await getCurrentUser();
+  if (user.value) {
+    templates.value = await fetchSubscriptions(user);
+  } else {
+    templates.value = [];
+    errors.value = "You must be logged in to view this page.";
+  }
 });
 </script>
 
 <template>
   <div class="q-gutter-md">
-    <q-page></q-page>
+    <q-page>
       <ErrorBanner :errors="errors" />
 
       <div class="row">

@@ -1,29 +1,11 @@
 <script setup>
-import axios from "axios";
 import { ref, onMounted } from "vue";
+import { getCurrentUser } from "@/utils/auth.js";
 
-const username = ref(null);
-const id = ref(null);
+const user = ref(null);
 
-const fetchCurrentUser = async () => {
-  axios
-    .get("current_user/", {
-      withCredentials: true,
-    })
-    .then((response) => {
-      console.log(response.data);
-      if (response.data.success) {
-        username.value = response.data.username;
-        id.value = response.data.id;
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
-onMounted(() => {
-  fetchCurrentUser();
+onMounted(async () => {
+  user.value = await getCurrentUser();
 });
 </script>
 
@@ -38,11 +20,11 @@ onMounted(() => {
       <q-route-tab :to="{ name: 'templates' }" label="Templates" />
       <q-route-tab :to="{ name: 'subscriptions' }" label="Subscriptions" />
       <q-route-tab
-        v-if="username"
-        :to="{ name: 'profile', params: { id: id } }"
-        :label="username"
+        v-if="user"
+        :to="{ name: 'my-profile', params: { id: user.id } }"
+        :label="user.username"
       />
-      <q-route-tab v-if="username" :to="{ name: 'logout' }" label="Logout" />
+      <q-route-tab v-if="user" :to="{ name: 'logout' }" label="Logout" />
       <q-route-tab v-else :to="{ name: 'login' }" label="Login" />
     </q-tabs>
   </q-header>

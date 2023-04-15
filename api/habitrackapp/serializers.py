@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Template
+from .models import Template, Subscription
 from django.contrib.auth.password_validation import validate_password
 
 
@@ -17,14 +17,9 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class SimpleUserSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = User
-        fields = [
-            "url",
-            "id",
-            "username",
-        ]
+        fields = ['id', 'username']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -80,16 +75,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         else:
             return serializers.ValidationError(self.errors)
 
-#############################################################
-#                    Subscribe Serializer                    #
-#############################################################
-
-
-# class SubscriberSerializer(serializers.HyperlinkedModelSerializer):
 
 #############################################################
 #                    Template Serializer                    #
 #############################################################
+
+class SimpleTemplateSerializer(serializers.HyperlinkedModelSerializer):
+
+    creator = SimpleUserSerializer(
+        read_only=True
+    )
+
+    class Meta:
+        model = Template
+        fields = ['id', 'name', 'description', 'option_1',
+                  'option_2', 'option_3', 'option_4', 'creator']
 
 
 class TemplateSerializer(serializers.HyperlinkedModelSerializer):
@@ -117,3 +117,16 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
             "option_4",
             "creator"
         ]
+
+#############################################################
+#                    Subscribe Serializer                    #
+#############################################################
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=Template.objects.all())
+
+    class Meta:
+        model = Subscription
+        fields = ('id', 'user', 'template', 'created_at')
