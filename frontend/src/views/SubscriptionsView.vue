@@ -2,16 +2,16 @@
 import ErrorBanner from "../components/ErrorBanner.vue";
 import { ref, onMounted } from "vue";
 import { fetchSubscriptions } from "../utils/subscription";
-import { getCurrentUser } from "../utils/auth";
+import { getCurrentUsername } from "../utils/auth";
 
 const templates = ref([]);
-const user = ref(null);
+const username = ref(null);
 const errors = ref(null);
 
 onMounted(async () => {
-  user.value = await getCurrentUser();
-  if (user.value) {
-    templates.value = await fetchSubscriptions(user);
+  username.value = await getCurrentUsername();
+  if (username.value) {
+    templates.value = await fetchSubscriptions(username.value);
   } else {
     templates.value = [];
     errors.value = "You must be logged in to view this page.";

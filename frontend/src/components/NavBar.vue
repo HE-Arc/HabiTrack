@@ -1,11 +1,31 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getCurrentUser } from "@/utils/auth.js";
+import { Notify } from "quasar";
+import { logout } from "@/utils/auth.js";
+import { getCurrentUsername } from "@/utils/auth.js";
 
-const user = ref(null);
+const logoutReturn = ref(null);
+const loading = ref(true);
+const username = ref(null);
+
+const submit = async () => {
+  logoutReturn.value = await logout();
+  if (logoutReturn.value.success) {
+    Notify.create({
+      message: "Lougged out",
+      color: "negative",
+      position: "top",
+    });
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1000);
+  }
+};
 
 onMounted(async () => {
-  user.value = await getCurrentUser();
+  username.value = await getCurrentUsername();
+
+  loading.value = true;
 });
 </script>
 
@@ -19,13 +39,16 @@ onMounted(async () => {
       <q-route-tab :to="{ name: 'home' }" label="Home" />
       <q-route-tab :to="{ name: 'templates' }" label="Templates" />
       <q-route-tab :to="{ name: 'subscriptions' }" label="Subscriptions" />
-      <q-route-tab
-        v-if="user"
-        :to="{ name: 'my-profile', params: { id: user.id } }"
-        :label="user.username"
-      />
-      <q-route-tab v-if="user" :to="{ name: 'logout' }" label="Logout" />
-      <q-route-tab v-else :to="{ name: 'login' }" label="Login" />
+
+      <q-tab v-if="username" :to="{ name: 'my-profile' }">
+        {{ username }}
+      </q-tab>
+
+      <q-route-tab v-if="!username" :to="{ name: 'login' }" label="Login" />
+
+      <q-tab v-if="username" :to="{ name: 'logout' }" @click="submit">
+        Logout
+      </q-tab>
     </q-tabs>
   </q-header>
 </template>

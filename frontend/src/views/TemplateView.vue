@@ -3,20 +3,19 @@ import { ref, onMounted } from "vue";
 import ErrorBanner from "../components/ErrorBanner.vue";
 
 // Import necessary custom tools
-import { getCurrentUser } from "@/utils/auth.js";
+import { getCurrentUsername } from "@/utils/auth.js";
 import { isUserSubscribed, subOrUnsubScribe } from "@/utils/subscription.js";
 import { templateAction } from "@/utils/template.js";
 
 const templates = ref([]);
-let user = ref(null);
+const username = ref(null);
 
 // We need error handling
 const errors = ref(null);
 
 onMounted(async () => {
   templates.value = await templateAction("get");
-  console.log(templates.value);
-  user.value = await getCurrentUser();
+  username.value = await getCurrentUsername();
 });
 </script>
 
@@ -24,7 +23,12 @@ onMounted(async () => {
   <q-page padding>
     <ErrorBanner :errors="errors" />
 
-    <q-btn id="add_template" color="primary" :to="{ name: 'templates.create' }">
+    <q-btn
+      v-if="username"
+      id="add_template"
+      color="primary"
+      :to="{ name: 'templates.create' }"
+    >
       <q-icon left name="mdi-plus-box" />
       <q-label for="add_template">Create a new template</q-label>
     </q-btn>

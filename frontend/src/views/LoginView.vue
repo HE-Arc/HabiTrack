@@ -1,44 +1,30 @@
 <script setup>
-import axios from "axios";
 import { ref } from "vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
+import { login } from "@/utils/auth.js";
+import { Notify } from "quasar";
 
 const success = ref(false);
-const errors = ref(null);
+const errors = ref([]);
 const username = ref("");
 const password = ref("");
+const loginReturn = ref(null);
 
-// Submit user login
 const submit = async () => {
-  if (!username.value || !password.value) {
-    errors.value = ["Please enter a username and password"];
-    return;
-  }
-  axios
-    .post(
-      "login/",
-      {
-        username: username.value,
-        password: password.value,
-      },
-      {
-        withCredentials: true,
-      }
-    )
-    .then((response) => {
-      if (response.data.success) {
-        setTimeout(() => {
-          window.location.href = "/subscriptions/";
-        }, 1000);
-      } else {
-        errors.value = [response.data.error];
-      }
-    })
-    .catch((error) => {
-      errors.value = error.response.data;
+  loginReturn.value = await login(username, password);
+  if (loginReturn.value.success) {
+    Notify.create({
+      message: "Login successful",
+      color: "positive",
+      position: "top",
     });
+    setTimeout(() => {
+      window.location.href = "/subscriptions";
+    }, 1000);
+  }
 };
 </script>
+
 <template>
   <q-page>
     <q-form class="" @submit="submit()">
@@ -85,7 +71,7 @@ const submit = async () => {
             </q-card-section>
 
             <q-banner
-              v-if="success"
+              v-if="success.value"
               inline-actions
               class="q-mb-lg text-white bg-green"
             >
@@ -94,7 +80,7 @@ const submit = async () => {
                 Login successful!
               </div>
             </q-banner>
-            <ErrorBanner :errors="errors" />
+            <ErrorBanner :errors="errors.value" />
 
             <q-card-section class="q-gutter-y-sm">
               <div class="text-center">

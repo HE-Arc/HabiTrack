@@ -1,9 +1,8 @@
 import axios from "axios";
 
-export const fetchSubscriptions = async (user) => {
+export const fetchSubscriptions = async (username) => {
   try {
-    console.log(user.value.id);
-    const response = await axios.get(`/subscriptions/user/${user.value.id}`);
+    const response = await axios.get(`/subscriptions/user/${username}`);
     console.log(response.data);
     if (response.data.success) {
       return response.data.subscriptions;

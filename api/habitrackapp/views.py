@@ -7,6 +7,16 @@ from .models import Template
 from rest_framework.decorators import action
 from django.utils.decorators import method_decorator
 
+
+import json
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 # Models
 from .models import Template, Subscription
 
@@ -47,35 +57,80 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         template.subscribers.remove(User.objects.get(id=pk))
         return Response({'success': True})
 
-    @action(detail=False, methods=['get'], url_path=r"current")
-    def current(self, request):
-        user = request.user
-        if user.is_authenticated:
-            serializer = SimpleUserSerializer(user)
-            return Response({
-                'success': 'User logged in',
-                'user': serializer.data
-            })
-        else:
-            return Response({'error': 'User not logged in'})
 
+#####################################################################
+# Authentication tools
+
+class SessionView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def get(request, format=None):
+        return JsonResponse({'isAuthenticated': True})
+
+
+class WhoAmIView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def get(request, format=None):
+        if request.user.is_authenticated:
+            return JsonResponse({'username': request.user.username})
+        else:
+            return JsonResponse({'username': None})
+
+
+@ensure_csrf_cookie
+def get_csrf(request):
+    response = JsonResponse({'detail': 'CSRF cookie set'})
+    response['X-CSRFToken'] = get_token(request)
+    return response
+
+
+@require_POST
+def login_view(request):
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+
+    if username is None or password is None:
+        return JsonResponse({'errors': 'Please provide username and password.'}, status=400)
+
+    user = authenticate(username=username, password=password)
+
+    if user is None:
+        return JsonResponse({'errors': 'Invalid credentials.'}, status=400)
+
+    login(request, user)
+    return JsonResponse({'success': 'Successfully logged in.'})
+
+
+def logout_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+
+    logout(request)
+    return JsonResponse({'success': 'Successfully logged out.'})
+
+
+#####################################################################
+# Model views
 
 class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
-
-    # No actions needed for the moment
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
 
-    # TODO Check wether this is needed and correct
-    @action(detail=False, methods=['get'], url_path=r"user/(?P<user_id>\d+)")
-    def get_subscriptions(self, request, user_id=None):
+    @action(detail=False, methods=['get'], url_path=r"user/(?P<username>[\w.@+-]+)")
+    def get_subscriptions(self, request, username=None):
         try:
-            user = User.objects.get(id=user_id)
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'})
 
@@ -93,56 +148,3 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             'success': True,
             'subscriptions': subscription_data,
         })
-
-    # # TODO Check wether this is needed and correct
-    # @action(detail=True, methods=['post'])
-    # def get_subscribers(self, request, template_id):
-    #     template = get_object_or_404(Template, id=template_id)
-    #     return JsonResponse({
-    #         'success': True,
-    #         # View can fetch each user's data
-    #         'subscribers': [user.id for user in template.subscribers.all()]
-    #     })
-
-    # Check wether a user is subscribed to a template
-    # @action(detail=True, methods=['get'], url_path=r"subscribed/(?P<template_id>\d+)")
-    # def subscribed(self, request, pk=None, template_id=None):
-    #     user = User.objects.get(id=pk)
-    #     template = get_object_or_404(Template, id=template_id)
-    #     return Response({
-    #         'success': True,
-    #         'subscribed': user in template.subscribers.all()
-    #     })
-
-    # Authentication
-
-
-class LoginView(APIView):
-    def post(self, request):
-        if (request.user.is_authenticated):
-            return Response({'error': 'User already logged in'})
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(
-            request=request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if user.is_authenticated:
-                return Response({'success': 'Login Successful'})
-            else:
-                return Response({'error': 'User not authenticated'})
-        return Response({'error': 'Wrong Credentials'})
-
-
-class LogoutView(APIView):
-    def post(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged in'})
-
-        logout(request)
-        return Response({'success': 'Logout Successful'})
-
-
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
