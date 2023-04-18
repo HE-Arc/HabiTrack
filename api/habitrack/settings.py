@@ -69,7 +69,6 @@ CSRF_TRUSTED_ORIGINS = [
     os.getenv("SERVER_URL")
 ]
 
-CSRF_COOKIE_HTTPONLY = False
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'habitrack.urls'

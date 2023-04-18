@@ -27,10 +27,21 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 const csrftoken = Cookies.get("csrftoken");
+if (csrftoken == undefined) {
+  axios.get("csrf/").then((response) => {
+    Cookies.set("csrftoken", response.data.csrfToken, {
+      expires: 1 / 48,
+    });
+  });
+}
+
 console.log(csrftoken);
 if (csrftoken) {
   axios.defaults.headers.common["X-CSRFToken"] = csrftoken;
+} else {
+  throw new Error("CSRF token not found - maybe you need to enable cookies?");
 }
+
 
 axios.defaults.withCredentials = true;
 

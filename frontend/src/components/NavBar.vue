@@ -12,7 +12,7 @@ const submit = async () => {
   logoutReturn.value = await logout();
   if (logoutReturn.value.success) {
     Notify.create({
-      message: "Lougged out",
+      message: "Logged out",
       color: "negative",
       position: "top",
     });
