@@ -23,24 +23,24 @@ onMounted(async () => {
   <q-page padding>
     <ErrorBanner :errors="errors" />
 
-      <div class="row">
-        <div
-          class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
-          v-for="(template, index) in templates"
-          :key="index"
-        >
-          <q-card class="q-pa-md">
-            <q-card-section class="text-center">
-              <div class="text-h5">{{ template.name }}</div>
-            </q-card-section>
+    <div class="row">
+      <div
+        class="text-center col-md-6 col-lg-4 col-xl-3 q-pa-sm"
+        v-for="(template, index) in templates"
+        :key="index"
+      >
+        <q-card class="q-pa-md">
+          <q-card-section class="text-center">
+            <div class="text-h5">{{ template.name }}</div>
+          </q-card-section>
 
-        <q-card-section class="text-center">
-          <div class="text-h6">{{ template.description }}</div>
-        </q-card-section>
+          <q-card-section class="text-center">
+            <div class="text-h6">{{ template.description }}</div>
+          </q-card-section>
 
-            <q-card-section class="text-left">
-              <div class="text-h6">{{ template.option_2 }}</div>
-            </q-card-section>
+          <q-card-section class="text-left">
+            <div class="text-h6">{{ template.option_2 }}</div>
+          </q-card-section>
 
           <q-card-section class="text-left">
             <div class="text-h6">{{ template.option_3 }}</div>

@@ -11,12 +11,22 @@ export const fetchTemplates = async (username = null) => {
 };
 
 // Generic function for all of the above (create, update, delete)
-export const templateAction = async (action, template = null) => {
+export const templateAction = async (
+  action,
+  template = null,
+  username = null
+) => {
   try {
     const response = ref(null);
     switch (action) {
       case "create":
-        response.value = await axios.put(`/templates/`, template);
+        if (username == null) {
+          break;
+        }
+        response.value = await axios.put(`/templates/`, {
+          template: template,
+          username: username,
+        });
         break;
       case "get":
         response.value = await axios.get("/templates/");

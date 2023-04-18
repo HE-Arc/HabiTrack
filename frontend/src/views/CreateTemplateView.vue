@@ -1,9 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getCurrentUser } from "@/utils/auth.js";
+import { getCurrentUsername } from "@/utils/auth.js";
 import { templateAction } from "@/utils/template.js";
 
-const success = ref(false);
 const errors = ref(null);
 
 // "name", "description", "option_1", "option_2", "option_3", "option_4"
@@ -14,11 +13,14 @@ const option_2 = ref("");
 const option_3 = ref("");
 const option_4 = ref("");
 
-const user = ref(null);
+const username = ref(null);
 
 // Execute le code quand le composant démarre
 onMounted(async () => {
-  user.value = await getCurrentUser();
+  username.value = await getCurrentUsername();
+  if (username.value) {
+    errors.value = "You must be logged in to view this page.";
+  }
 });
 </script>
 
@@ -101,17 +103,6 @@ onMounted(async () => {
                 class="q-mb-md"
               />
             </q-card-section>
-
-            <q-banner
-              v-if="success"
-              inline-actions
-              class="q-mb-lg text-white bg-green"
-            >
-              <div class="text-h6">
-                <q-icon left size="md" name="mdi-check-circle-outline" />
-                New template successfully created!
-              </div>
-            </q-banner>
 
             <q-card-section class="q-gutter-y-sm">
               <div class="text-center">
