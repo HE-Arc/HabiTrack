@@ -8,6 +8,36 @@ export const getCurrentUsername = async () => {
   }
 };
 
+export const register = async (username, password, confirm) => {
+  const returnValue = {
+    errors: [],
+    success: null,
+  };
+  if (!username || !password || !confirm) {
+    returnValue.errors = ["Please enter a username and password"];
+    return returnValue;
+  }
+  try {
+    const response = await axios.post("register/", {
+      username: username.value,
+      password: password.value,
+      confirm: confirm.value,
+    });
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      // Add a cookie to the browser to keep the user logged in
+      Cookies.set("username", username.value, {
+        expires: 1 / 48,
+      }); // expires in 30 minutes
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
+};
+
 export const login = async (username, password) => {
   const returnValue = {
     errors: [],
@@ -32,7 +62,7 @@ export const login = async (username, password) => {
       returnValue.errors = [response.data.error];
     }
   } catch (error) {
-    returnValue.errors = error.response.data;
+    returnValue.errors = error.response.data.errors;
   }
   return returnValue;
 };

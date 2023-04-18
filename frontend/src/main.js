@@ -35,13 +35,11 @@ if (csrftoken == undefined) {
   });
 }
 
-console.log(csrftoken);
 if (csrftoken) {
   axios.defaults.headers.common["X-CSRFToken"] = csrftoken;
 } else {
   throw new Error("CSRF token not found - maybe you need to enable cookies?");
 }
-
 
 axios.defaults.withCredentials = true;
 

@@ -26,9 +26,10 @@ urlpatterns = [
     path("", include(router.urls)),
 
     path('csrf/', views.get_csrf, name='api-csrf'),
+    path('register/', views.register_view, name='api-register'),
     path('login/', views.login_view, name='api-login'),
     path('logout/', views.logout_view, name='api-logout'),
-    path('session/', views.SessionView.as_view(), name='api-session'),  # new
-    path('whoami/', views.WhoAmIView.as_view(), name='api-whoami'),  # new
+    path('session/', views.SessionView.as_view(), name='api-session'),
+    path('whoami/', views.WhoAmIView.as_view(), name='api-whoami')
 
 ]

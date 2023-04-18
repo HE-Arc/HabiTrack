@@ -90,6 +90,27 @@ def get_csrf(request):
 
 
 @require_POST
+def register_view(request):
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+
+    if username is None or password is None:
+        return JsonResponse({'errors': 'Please provide username and password.'}, status=400)
+
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({'errors': 'Username already exists.'}, status=409)
+
+    user = User.objects.create_user(username=username, password=password)
+
+    if user is None:
+        return JsonResponse({'errors': 'Something went terribly wrong.'}, status=500)
+
+    login(request, user)
+    return JsonResponse({'success': 'Successfully registered.'})
+
+
+@require_POST
 def login_view(request):
     data = json.loads(request.body)
     username = data.get('username')
@@ -101,12 +122,13 @@ def login_view(request):
     user = authenticate(username=username, password=password)
 
     if user is None:
-        return JsonResponse({'errors': 'Invalid credentials.'}, status=400)
+        return JsonResponse({'errors': 'Invalid credentials.'}, status=401)
 
     login(request, user)
     return JsonResponse({'success': 'Successfully logged in.'})
 
 
+@require_POST
 def logout_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
