@@ -3,8 +3,19 @@ import { Cookies } from "quasar";
 
 // Get current user
 export const getCurrentUsername = async () => {
-  if (Cookies.has("username")) {
-    return Cookies.get("username");
+  try {
+    const response = await axios.get("whoami/");
+    if (response.data.username != null) {
+      Cookies.set("username", response.data.username, {
+        expires: 1 / 48,
+      }); // expires in 30 minutes
+      return response.data.username;
+    } else {
+      Cookies.remove("username");
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -19,14 +30,14 @@ export const register = async (username, password, confirm) => {
   }
   try {
     const response = await axios.post("register/", {
-      username: username.value,
-      password: password.value,
-      confirm: confirm.value,
+      username: username,
+      password: password,
+      confirm: confirm,
     });
     if (response.data.success) {
       returnValue.success = response.data.success;
       // Add a cookie to the browser to keep the user logged in
-      Cookies.set("username", username.value, {
+      Cookies.set("username", username, {
         expires: 1 / 48,
       }); // expires in 30 minutes
     } else {
@@ -49,13 +60,13 @@ export const login = async (username, password) => {
   }
   try {
     const response = await axios.post("login/", {
-      username: username.value,
-      password: password.value,
+      username: username,
+      password: password,
     });
     if (response.data.success) {
       returnValue.success = response.data.success;
       // Add a cookie to the browser to keep the user logged in
-      Cookies.set("username", username.value, {
+      Cookies.set("username", username, {
         expires: 1 / 48,
       }); // expires in 30 minutes
     } else {
@@ -97,10 +108,10 @@ export const changePassword = async (
   }
   try {
     const response = await axios.post("change-password/", {
-      username: username.value,
-      password: password.value,
-      new: new_password.value,
-      confirm: confirm.value,
+      username: username,
+      password: password,
+      new: new_password,
+      confirm: confirm,
     });
     if (response.data.success) {
       returnValue.success = response.data.success;

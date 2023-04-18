@@ -14,10 +14,10 @@ const username = ref("");
 
 const submit = async () => {
   const response = await changePassword(
-    username,
-    oldPassword,
-    newPassword,
-    confirmNewPassword
+    username.value,
+    oldPassword.value,
+    newPassword.value,
+    confirmNewPassword.value
   );
 
   if (response.success) {

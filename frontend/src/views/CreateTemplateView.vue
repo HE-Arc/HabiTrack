@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { getCurrentUsername } from "@/utils/auth.js";
 import { templateAction } from "@/utils/template.js";
+import { Notify } from "quasar";
 
 const errors = ref(null);
 
@@ -15,6 +16,37 @@ const option_4 = ref("");
 
 const username = ref(null);
 
+const submit = async () => {
+  const response = await templateAction(
+    "create",
+    {
+      name: name.value,
+      description: description.value,
+      option_1: option_1.value,
+      option_2: option_2.value,
+      option_3: option_3.value,
+      option_4: option_4.value,
+    },
+    username.value
+  );
+  if (response.success) {
+    Notify.create({
+      message: "Template successfully created!",
+      color: "positive",
+      position: "top",
+    });
+    // clear input fields
+    name.value = "";
+    description.value = "";
+    option_1.value = "";
+    option_2.value = "";
+    option_3.value = "";
+    option_4.value = "";
+  } else {
+    errors.value = response.errors;
+  }
+};
+
 // Execute le code quand le composant démarre
 onMounted(async () => {
   username.value = await getCurrentUsername();
@@ -27,19 +59,7 @@ onMounted(async () => {
 <template>
   <q-page class="q-ma-auto" padding>
     <ErrorBanner :errors="errors" />
-    <q-form
-      class=""
-      @submit="
-        templateAction('create', {
-          name,
-          description,
-          option_1,
-          option_2,
-          option_3,
-          option_4,
-        })
-      "
-    >
+    <q-form class="" @submit="submit">
       <div>
         <div class="q-mt-md">
           <q-card>

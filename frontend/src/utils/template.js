@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ref } from "vue";
 
 // For clarity, we split the functions (simplifies maintenance)
 export const fetchTemplates = async (username = null) => {
@@ -16,40 +15,52 @@ export const templateAction = async (
   template = null,
   username = null
 ) => {
+  const returnValue = {
+    errors: [],
+    success: null,
+    data: null,
+  };
+  let response = null;
+
   try {
-    const response = ref(null);
     switch (action) {
       case "create":
         if (username == null) {
+          returnValue.errors = ["No username provided"];
           break;
         }
-        response.value = await axios.put(`/templates/`, {
+        response = await axios.post(`/templates/`, {
           template: template,
           username: username,
         });
         break;
       case "get":
-        response.value = await axios.get("/templates/");
-        console.log(response.value.data);
+        response = await axios.get("/templates/");
         break;
       case "update":
-        response.value = await axios.put(
-          `/templates/${template.id}/`,
-          template
-        );
+        response = await axios.put(`/templates/${template.id}/`, template);
         break;
       case "delete":
-        response.value = await axios.delete(`/templates/${template.id}/`);
+        response = await axios.delete(`/templates/${template.id}/`);
         break;
+      default:
+        returnValue.errors = ["Invalid action"];
+        return returnValue;
     }
-    if (response.value.data.success) {
-      return response.value.data;
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+    } else if (response.data.errors) {
+      returnValue.errors = response.data.errors;
+    } else if (response.status === 200 && response.data.length > 0) {
+      returnValue.success = true;
+      returnValue.data = response.data;
     } else {
-      return response.value.data.error;
+      returnValue.errors = ["Unknown error"];
     }
   } catch (error) {
-    console.log("[ERROR] " + action + error);
+    returnValue.errors = error;
   }
+  return returnValue;
 };
 
 export const getCreatedTemplates = async (username) => {

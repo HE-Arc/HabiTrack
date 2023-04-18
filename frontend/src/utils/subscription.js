@@ -15,38 +15,61 @@ export const fetchSubscriptions = async (username) => {
 };
 
 // Check if user is subscribed to a template
-export const isUserSubscribed = async (user, template) => {
+export const isUserSubscribed = async (username, template_id) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    subscribed: false,
+  };
+  if (!username || !template_id) {
+    returnValue.errors = ["Please give a username and template_id",
+      "Values given: " + username + " " + template_id + " "
+    ];
+    return returnValue;
+  }
+
   try {
     const response = await axios.get(
-      `/subscriptions/${user.value.id}/subscribed/${template.id}/`
+      `/subscriptions/${username}/subscribed/${template_id}/`
     );
-    if (response.data.success && response.data.subscribed) {
-      return true;
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.subscribed = response.data.subscribed;
     } else {
-      return false;
+      returnValue.errors = [response.data.error];
     }
   } catch (error) {
-    console.log(error);
+    returnValue.errors = error.response.data.errors;
   }
+  return returnValue;
 };
 
 // Subscribe user to a template
-export const subOrUnsubScribe = async (route, user, template) => {
-  await axios
-    .post(`/users/${user.value.id}/${route}/${template.id}/`, {})
-    .then((response) => {
-      // handle success response
-      if (response.data.success) {
-        return true;
-      } else {
-        return false;
-      }
-    })
-    .catch((error) => {
-      // handle error response
-      console.log(error);
-      return false;
-    });
+export const subOrUnsubScribe = async (route, username, template_id) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+  };
+  console.log(username);
+  console.log(template_id);
+  if (!username || !template_id) {
+    returnValue.errors = ["Please give a username and template_id"];
+    return returnValue;
+  }
+
+  try {
+    const response = await axios.post(
+      "subscriptions/" + route + "/" + username + "/" + template_id + "/"
+    );
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
 };
 
 // Get subscription count

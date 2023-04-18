@@ -43,20 +43,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    @method_decorator(login_required)
-    @action(detail=True, methods=['post'], url_path=r"subscribe/(?P<template_id>\d+)")
-    def subscribe(self, request, pk=None, template_id=None):
-        template = get_object_or_404(Template, id=template_id)
-        template.subscribers.add(User.objects.get(id=pk))
-        return Response({'success': True})
-
-    @method_decorator(login_required)
-    @action(detail=True, methods=['post'], url_path=r"unsubscribe/(?P<template_id>\d+)")
-    def unsubscribe(self, request, pk=None, template_id=None):
-        template = get_object_or_404(Template, id=template_id)
-        template.subscribers.remove(User.objects.get(id=pk))
-        return Response({'success': True})
-
     @action(detail=False, methods=['delete'], url_path=r"(?P<user_id>\d+)")
     def delete(self, request, pk=None, user_id=None):
         user = get_object_or_404(User, id=user_id)
@@ -201,19 +187,48 @@ class TemplateViewSet(viewsets.ModelViewSet):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
 
+    #####################################################################
+    # CRUD
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        username = data.get('username')
+
+        if not username:
+            return JsonResponse({'errors': 'Please enter a username'}, status=400)
+
+        templateData = data.get('template')
+        # get template object as Template
+        template = Template.objects.create(
+            name=templateData.get('name'),
+            description=templateData.get('description'),
+            option_1=templateData.get('option_1'),
+            option_2=templateData.get('option_2'),
+            option_3=templateData.get('option_3'),
+            option_4=templateData.get('option_4'),
+            creator=User.objects.get(username=username))
+
+        if template is None:
+            return JsonResponse({'errors': 'Something went terribly wrong.'}, status=500)
+        else:
+            return JsonResponse({'success': 'Successfully created template.'})
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('name')
+
     @ action(detail=False, methods=['get'], url_path=r"count/(?P<username>[\w.@+-]+)")
     def count_by_user(self, request, username):
         user = get_object_or_404(User, username=username)
         count = self.get_queryset().filter(creator=user).count()
-        return Response({'success': True,
-                         'count': count})
+        return JsonResponse({'success': True,
+                             'count': count})
 
     @ action(detail=False, methods=['get'], url_path=r"user/(?P<username>[\w.@+-]+)")
     def get_by_user(self, request, username):
         user = get_object_or_404(User, username=username)
         templates = self.get_queryset().filter(creator=user)
-        return Response({'success': True,
-                         'templates': TemplateSerializer(templates, many=True).data})
+        return JsonResponse({'success': True,
+                             'templates': TemplateSerializer(templates, many=True).data})
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -248,3 +263,47 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         count = self.get_queryset().filter(user=user).count()
         return Response({'success': True,
                          'count': count})
+
+    # Is a username subscribed to a template?
+    @action(detail=False, methods=['get'], url_path=r"(?P<username>[\w.@+-]+)/subscribed/(?P<template_id>[\w.@+-]+)")
+    def is_subscribed(self, request, username, template_id):
+        user = get_object_or_404(User, username=username)
+        template = get_object_or_404(Template, id=template_id)
+        subscription = Subscription.objects.filter(
+            user=user, template=template)
+        return JsonResponse({'success': True,
+                             'subscribed': subscription.exists()})
+
+    # Subscribe a username to a template
+    @ action(detail=False, methods=['post'], url_path=r"subscribe/(?P<username>[\w.@+-]+)/(?P<template_id>[\w.@+-]+)")
+    def subscribe(self, request, username, template_id):
+        user = get_object_or_404(User, username=username)
+        # check if user is authed
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'User not logged in'})
+
+        template = get_object_or_404(Template, id=template_id)
+        subscription_exists = Subscription.objects.filter(
+            user=user, template=template).exists()
+        if subscription_exists:
+            return JsonResponse({'error': 'Subscription already exists'})
+
+        subscription = Subscription.objects.create(
+            user=user, template=template)
+        return JsonResponse({'success': "Successfully subscribed to template."})
+
+    @ action(detail=False, methods=['post'], url_path=r"unsubscribe/(?P<username>[\w.@+-]+)/(?P<template_id>[\w.@+-]+)")
+    def unsubscribe(self, request, username, template_id):
+        user = get_object_or_404(User, username=username)
+        # check if user is authed
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'User not logged in'})
+
+        template = get_object_or_404(Template, id=template_id)
+        subscription = Subscription.objects.filter(
+            user=user, template=template)
+        if not subscription.exists():
+            return JsonResponse({'error': 'Subscription does not exist'})
+
+        subscription.delete()
+        return JsonResponse({'success': "Successfully unsubscribed from template."})

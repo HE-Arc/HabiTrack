@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class Template(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=2000, blank=True)
+    description = models.CharField(max_length=2000)
     subscribers = models.ManyToManyField(
         User, related_name="templates", blank=True)
 

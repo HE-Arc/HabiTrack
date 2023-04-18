@@ -12,7 +12,11 @@ const showRegisterFields = ref(false);
 
 const submit = async () => {
   if (showRegisterFields.value) {
-    const response = await register(username, password, confirm);
+    const response = await register(
+      username.value,
+      password.value,
+      confirm.value
+    );
     if (response.success != null) {
       Notify.create({
         message: "Registration successful",
@@ -27,7 +31,7 @@ const submit = async () => {
       errors.value = response.errors;
     }
   } else {
-    const response = await login(username, password, confirmPassword);
+    const response = await login(username.value, password.value);
     if (response.success != null) {
       Notify.create({
         message: "Login successful",
