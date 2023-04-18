@@ -30,6 +30,10 @@ urlpatterns = [
     path('login/', views.login_view, name='api-login'),
     path('logout/', views.logout_view, name='api-logout'),
     path('session/', views.SessionView.as_view(), name='api-session'),
-    path('whoami/', views.WhoAmIView.as_view(), name='api-whoami')
+    path('whoami/', views.WhoAmIView.as_view(), name='api-whoami'),
+
+    path('my-profile/', views.MyProfileView.as_view(), name='api-my-profile'),
+    path('change-password/', views.change_password_view,
+         name='api-change-password'),
 
 ]

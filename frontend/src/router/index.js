@@ -20,6 +20,16 @@ const router = createRouter({
       component: () => import("../views/AuthView.vue"),
     },
     {
+      path: "/my-profile",
+      name: "my-profile",
+      component: () => import("../views/UserProfileView.vue"),
+    },
+    {
+      path: "/change-password",
+      name: "change-password",
+      component: () => import("../views/ChangePasswordView.vue"),
+    },
+    {
       path: "/templates",
       name: "templates",
       component: () => import("../views/TemplateView.vue"),

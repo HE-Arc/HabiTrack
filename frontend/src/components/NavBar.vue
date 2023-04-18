@@ -40,9 +40,9 @@ onMounted(async () => {
       <q-route-tab :to="{ name: 'templates' }" label="Templates" />
       <q-route-tab :to="{ name: 'subscriptions' }" label="Subscriptions" />
 
-      <q-tab v-if="username" :to="{ name: 'my-profile' }">
+      <q-route-tab v-if="username" :to="{ name: 'my-profile' }">
         {{ username }}
-      </q-tab>
+      </q-route-tab>
 
       <q-route-tab v-if="!username" :to="{ name: 'login' }" label="Login" />
 

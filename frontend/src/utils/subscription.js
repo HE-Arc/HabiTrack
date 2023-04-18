@@ -3,7 +3,6 @@ import axios from "axios";
 export const fetchSubscriptions = async (username) => {
   try {
     const response = await axios.get(`/subscriptions/user/${username}`);
-    console.log(response.data);
     if (response.data.success) {
       return response.data.subscriptions;
     } else {
@@ -48,4 +47,20 @@ export const subOrUnsubScribe = async (route, user, template) => {
       console.log(error);
       return false;
     });
+};
+
+// Get subscription count
+export const getSubscriptionsCount = async (username = null) => {
+  if (username) {
+    try {
+      const response = await axios.get(`/subscriptions/count/${username}/`);
+      if (response.data.success) {
+        return response.data.count;
+      } else {
+        return "Error getting subscription count";
+      }
+    } catch (error) {
+      console.log("[ERROR] getSubscriptionCount " + error);
+    }
+  }
 };
