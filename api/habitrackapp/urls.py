@@ -1,41 +1,47 @@
-from django.contrib import admin
+# ViewSets
+from .viewsets.TemplateViews import TemplateViewSet
+from .viewsets.SubscriptionViews import SubscriptionViewSet
+
+# User Tools
+from .views import UserViewSet
+from .views import SessionView, WhoAmIView
+from .views import MyProfileView
+
+# Authentication Tools
+from .viewsets.AuthenticationViews import get_csrf, register_view, login_view, logout_view, change_password_view
+
+# Other
 from django.urls import path, include
-from habitrackapp import views
 from rest_framework.routers import DefaultRouter
-from django.contrib.auth.views import LoginView
+
 
 router = DefaultRouter()
 
 router.register("templates",
-                views.TemplateViewSet,
+                TemplateViewSet,
                 basename="template")
 
 router.register("users",
-                views.UserViewSet,
+                UserViewSet,
                 basename="user")
 
 router.register("subscriptions",
-                views.SubscriptionViewSet,
+                SubscriptionViewSet,
                 basename="subscription")
-
-# router.register("register",
-#                 views.RegisterView,
-#                 basename="register")
 
 urlpatterns = [
     path("", include(router.urls)),
 
-    path('csrf/', views.get_csrf, name='api-csrf'),
-    path('register/', views.register_view, name='api-register'),
-    path('login/', views.login_view, name='api-login'),
-    path('logout/', views.logout_view, name='api-logout'),
-    path('session/', views.SessionView.as_view(), name='api-session'),
-    path('whoami/', views.WhoAmIView.as_view(), name='api-whoami'),
+    # Practical views for the frontend
+    path('csrf/', get_csrf, name='api-csrf'),
+    path('register/', register_view, name='api-register'),
+    path('login/', login_view, name='api-login'),
+    path('logout/', logout_view, name='api-logout'),
+    path('session/', SessionView.as_view(), name='api-session'),
+    path('whoami/', WhoAmIView.as_view(), name='api-whoami'),
 
-    path('my-profile/', views.MyProfileView.as_view(), name='api-my-profile'),
-    path('change-password/', views.change_password_view,
+    # User profile views
+    path('my-profile/', MyProfileView.as_view(), name='api-my-profile'),
+    path('change-password/', change_password_view,
          name='api-change-password'),
-
-
-
 ]
