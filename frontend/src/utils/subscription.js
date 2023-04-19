@@ -1,17 +1,27 @@
 import axios from "axios";
 
 export const fetchSubscriptions = async (username) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    data: null,
+  };
+  if (!username) {
+    returnValue.errors = ["Please give a username"];
+    return returnValue;
+  }
   try {
-    const response = await axios.get(`/subscriptions/user/${username}`);
+    const response = await axios.get(`/subscriptions/user/${username}/`);
     if (response.data.success) {
-      return response.data.subscriptions;
+      returnValue.success = response.data.success;
+      returnValue.data = response.data.subscriptions;
     } else {
-      console.log("Failed!");
-      return null;
+      returnValue.errors = [response.data.error];
     }
   } catch (error) {
-    console.log(error);
+    returnValue.errors = error.response.data.errors;
   }
+  return returnValue;
 };
 
 // Check if user is subscribed to a template
@@ -73,16 +83,25 @@ export const subOrUnsubScribe = async (route, username, template_id) => {
 
 // Get subscription count
 export const getSubscriptionsCount = async (username = null) => {
-  if (username) {
-    try {
-      const response = await axios.get(`/subscriptions/count/${username}/`);
-      if (response.data.success) {
-        return response.data.count;
-      } else {
-        return "Error getting subscription count";
-      }
-    } catch (error) {
-      console.log("[ERROR] getSubscriptionCount " + error);
-    }
+  let returnValue = {
+    errors: [],
+    success: null,
+    count: 0,
+  };
+  if (!username) {
+    returnValue.errors = ["Please give a username"];
+    return returnValue;
   }
+  try {
+    const response = await axios.get(`/subscriptions/count/${username}/`);
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.count = response.data.count;
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
 };

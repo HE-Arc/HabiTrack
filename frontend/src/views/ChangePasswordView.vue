@@ -5,6 +5,7 @@ import ErrorBanner from "@/components/ErrorBanner.vue";
 import { changePassword } from "@/utils/auth.js";
 import { getCurrentUsername } from "@/utils/auth.js";
 import { onMounted } from "vue";
+import router from "@/router";
 
 const oldPassword = ref("");
 const newPassword = ref("");
@@ -26,10 +27,9 @@ const submit = async () => {
       color: "positive",
       position: "top",
     });
-    // clear input fields
-    oldPassword.value = "";
-    newPassword.value = "";
-    confirmNewPassword.value = "";
+    setTimeout(() => {
+      router.push({ name: "my-profile" });
+    }, 1000);
   } else {
     console.log(response.errors);
     errors.value = response.errors;

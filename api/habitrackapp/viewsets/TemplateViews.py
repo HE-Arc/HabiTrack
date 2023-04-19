@@ -141,11 +141,26 @@ class TemplateViewSet(viewsets.ModelViewSet):
                              'count': count})
 
     @ action(detail=False, methods=['get'], url_path=r"user/(?P<username>[\w.@+-]+)")
-    def get_by_user(self, request, username):
+    def get_created_templates(self, request, username):
         """
         Is called when a GET request is made to `/templates/user/<username>` with a specific username in the URL path. It returns a list of all templates associated with the user with that username.
         """
-        user = get_object_or_404(User, username=username)
-        templates = self.get_queryset().filter(creator=user)
-        return JsonResponse({'success': True,
-                             'templates': TemplateSerializer(templates, many=True).data})
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'errors': 'User not found'})
+
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'User not logged in'})
+
+        templates = Template.objects.filter(creator=user)
+        created_data = []
+        for template in templates:
+            template_data = SimpleTemplateSerializer(
+                template).data
+            created_data.append(template_data)
+
+        return JsonResponse({
+            'success': True,
+            'templates': created_data,
+        })

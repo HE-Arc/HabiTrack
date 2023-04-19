@@ -8,12 +8,21 @@ $q.dark.set(true);
 
 <template>
   <q-layout view="lHh lpr lFf">
-    <!-- navbar -->
     <NavBar />
     <q-page-container>
-      <router-view />
+      <transition name="fade">
+        <router-view />
+      </transition>
     </q-page-container>
   </q-layout>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active {
+  transition: opacity 0.5s;
+}
+.fade-leave-active {
+  transition: opacity 0.5s;
+  opacity: 0;
+}
+</style>

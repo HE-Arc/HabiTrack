@@ -52,15 +52,17 @@ class SessionView(APIView):
 
 
 class WhoAmIView(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
 
     @ staticmethod
     def get(request, format=None):
         if request.user.is_authenticated:
-            return JsonResponse({'username': request.user.username})
+            return JsonResponse({
+                'success': True,
+                'username': request.user.username})
         else:
-            return JsonResponse({'username': None})
+            return JsonResponse({
+                'success': True,  # also true even if the user is not authenticated
+                'username': None})
 
 
 #####################################################################

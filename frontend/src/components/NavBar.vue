@@ -3,9 +3,9 @@ import { ref, onMounted } from "vue";
 import { Notify } from "quasar";
 import { logout } from "@/utils/auth.js";
 import { getCurrentUsername } from "@/utils/auth.js";
+import router from "@/router";
 
 const logoutReturn = ref(null);
-const loading = ref(true);
 const username = ref(null);
 
 const submit = async () => {
@@ -17,15 +17,16 @@ const submit = async () => {
       position: "top",
     });
     setTimeout(() => {
-      window.location.href = "/";
+      router.push({ name: "templates" });
     }, 1000);
   }
 };
 
-onMounted(async () => {
-  username.value = await getCurrentUsername();
-
-  loading.value = true;
+onMounted(() => {
+  // Call a function everytime the router changes
+  router.afterEach(async (to, from) => {
+    username.value = await getCurrentUsername();
+  });
 });
 </script>
 
@@ -37,8 +38,17 @@ onMounted(async () => {
 
     <q-tabs align="left">
       <q-route-tab :to="{ name: 'home' }" label="Home" />
-      <q-route-tab :to="{ name: 'templates' }" label="Templates" />
-      <q-route-tab :to="{ name: 'subscriptions' }" label="Subscriptions" />
+      <q-route-tab :to="{ name: 'templates' }" label="All Templates" />
+      <q-route-tab
+        v-if="username"
+        :to="{ name: 'subscriptions' }"
+        label="Subscriptions"
+      />
+      <q-route-tab
+        v-if="username"
+        :to="{ name: 'edits' }"
+        label="My Templates"
+      />
 
       <q-route-tab v-if="username" :to="{ name: 'my-profile' }">
         {{ username }}

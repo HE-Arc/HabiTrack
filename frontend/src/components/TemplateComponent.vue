@@ -10,6 +10,10 @@ import DeleteDialog from "./DeleteDialog.vue";
 const props = defineProps({
   propTemplate: {},
   username: {},
+  showEdit: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const deleteClicked = async () => {
@@ -18,7 +22,6 @@ const deleteClicked = async () => {
     props.propTemplate,
     props.username
   );
-  console.log(response);
   if (response.success) {
     Notify.create({
       message: "Template successfully deleted!",
@@ -26,6 +29,27 @@ const deleteClicked = async () => {
       position: "top",
     });
     window.location.href = "/templates";
+  } else {
+    Notify.create({
+      message: response.errors.errors,
+      color: "negative",
+      position: "top",
+    });
+  }
+};
+
+const updateClicked = async () => {
+  const response = await templateAction(
+    "update",
+    props.propTemplate,
+    props.username
+  );
+  if (response.success) {
+    Notify.create({
+      message: "Template successfully deleted!",
+      color: "positive",
+      position: "top",
+    });
   } else {
     Notify.create({
       message: response.errors.errors,
@@ -132,12 +156,14 @@ const creator = ref(false);
 const errors = ref(null);
 const template = ref(null);
 const loaded = ref(false);
+const isEdit = ref(false);
 
 onMounted(async () => {
   username.value = await getCurrentUsername();
   template.value = props.propTemplate;
   subbed.value = await isSubbed(template.value.id);
   creator.value = username.value == props.propTemplate.creator.username;
+  isEdit.value = props.showEdit;
   loaded.value = true;
 });
 </script>
@@ -150,30 +176,70 @@ onMounted(async () => {
     </q-card-section>
 
     <q-card-section class="text-center">
-      <div class="text-h6">{{ template.description }}</div>
+      <div v-if="!isEdit" class="text-h6">{{ template.description }}</div>
+      <q-input
+        v-else
+        v-model="template.description"
+        outlined
+        label="Description"
+        dense
+        placeholder="Description"
+      />
     </q-card-section>
 
     <q-card-section class="text-center">
-      <div class="text-h6">{{ template.option_1 }}</div>
+      <div v-if="!isEdit" class="text-h6">{{ template.option_1 }}</div>
+      <q-input
+        v-else
+        v-model="template.option_1"
+        outlined
+        label="Option 1"
+        dense
+        placeholder="Option 1"
+      />
     </q-card-section>
 
     <q-card-section class="text-center">
-      <div class="text-h6">{{ template.option_2 }}</div>
+      <div v-if="!isEdit" class="text-h6">{{ template.option_2 }}</div>
+      <q-input
+        v-else
+        v-model="template.option_2"
+        outlined
+        label="Option 2"
+        dense
+        placeholder="Option 2"
+      />
     </q-card-section>
 
     <q-card-section class="text-center">
-      <div class="text-h6">{{ template.option_3 }}</div>
+      <div v-if="!isEdit" class="text-h6">{{ template.option_3 }}</div>
+      <q-input
+        v-else
+        v-model="template.option_3"
+        outlined
+        label="Option 3"
+        dense
+        placeholder="Option 3"
+      />
     </q-card-section>
 
     <q-card-section class="text-center">
-      <div class="text-h6">{{ template.option_4 }}</div>
+      <div v-if="!isEdit" class="text-h6">{{ template.option_4 }}</div>
+      <q-input
+        v-else
+        v-model="template.option_4"
+        outlined
+        label="Option 4"
+        dense
+        placeholder="Option 4"
+      />
     </q-card-section>
 
-    <q-card-section class="text-center">
+    <q-card-section class="text-center" v-if="!isEdit">
       <div class="text-h6">Created by: {{ template.creator.username }}</div>
     </q-card-section>
 
-    <q-card-actions vertical>
+    <q-card-actions vertical v-if="!isEdit">
       <q-btn
         v-if="subbed"
         push
@@ -196,7 +262,11 @@ onMounted(async () => {
       </q-btn>
     </q-card-actions>
 
-    <q-card-actions vertical v-if="creator">
+    <q-card-actions vertical v-if="isEdit">
+      <q-btn push @click="updateClicked" color="secondary" label="Update" />
+    </q-card-actions>
+
+    <q-card-actions vertical v-if="creator && isEdit">
       <DeleteDialog
         :message="`Are you sure you want to delete this template?`"
         :confirmFunction="deleteClicked"

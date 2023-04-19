@@ -3,6 +3,7 @@ import { ref } from "vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
 import { register, login } from "@/utils/auth.js";
 import { Notify } from "quasar";
+import router from "@/router";
 
 const errors = ref([]);
 const username = ref("");
@@ -24,7 +25,7 @@ const submit = async () => {
         position: "top",
       });
       setTimeout(() => {
-        window.location.href = "/templates";
+        router.push({ name: "templates" });
       }, 1000);
     } else {
       console.log(response.errors);
@@ -39,7 +40,7 @@ const submit = async () => {
         position: "top",
       });
       setTimeout(() => {
-        window.location.href = "/subscriptions";
+        router.push({ name: "subscriptions" });
       }, 1000);
     } else {
       console.log(response.errors);

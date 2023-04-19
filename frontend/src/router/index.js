@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: "/templates",
       name: "templates",
-      component: () => import("../views/TemplateView.vue"),
+      component: () => import("../views/TemplatesView.vue"),
     },
     {
       path: "/templates/create",
@@ -43,6 +43,11 @@ const router = createRouter({
       path: "/subscriptions",
       name: "subscriptions",
       component: () => import("../views/SubscriptionsView.vue"),
+    },
+    {
+      path: "/edits",
+      name: "edits",
+      component: () => import("../views/EditsView.vue"),
     },
     {
       path: "/about",

@@ -3,19 +3,21 @@ import { Cookies } from "quasar";
 
 // Get current user
 export const getCurrentUsername = async () => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    username: null,
+  };
   try {
     const response = await axios.get("whoami/");
-    if (response.data.username != null) {
-      Cookies.set("username", response.data.username, {
-        expires: 1 / 48,
-      }); // expires in 30 minutes
-      return response.data.username;
-    } else {
-      Cookies.remove("username");
-      return null;
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.username = response.data.username;
+      return returnValue.username;
     }
   } catch (error) {
-    console.log(error);
+    returnValue.errors = error.response.data.errors;
+    return null;
   }
 };
 

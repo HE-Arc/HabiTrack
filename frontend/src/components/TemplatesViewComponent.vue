@@ -1,11 +1,24 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import ErrorBanner from "../components/ErrorBanner.vue";
-import TemplateComponent from "../components/TemplateComponent.vue";
+import ErrorBanner from "./ErrorBanner.vue";
+import TemplateComponent from "./TemplateComponent.vue";
 
 // Import necessary custom tools
 import { getCurrentUsername } from "@/utils/auth.js";
 import { templateAction } from "@/utils/template.js";
+import { fetchTemplates } from "@/utils/template.js";
+import { fetchSubscriptions } from "@/utils/subscription.js";
+
+const props = defineProps({
+  showSubscriptions: {
+    type: Boolean,
+    default: false,
+  },
+  showEdit: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const templates = ref([]);
 const username = ref(null);
@@ -15,7 +28,18 @@ const errors = ref(null);
 
 onMounted(async () => {
   username.value = await getCurrentUsername();
-  const response = await templateAction("get");
+  let response;
+  if (!props.showSubscriptions && !props.showEdit) {
+    response = await templateAction("get");
+  } else if (props.showSubscriptions && username.value) {
+    response = await fetchSubscriptions(username.value);
+  } else if (props.showSubscriptions && !username.value) {
+    errors.value = "You must be logged in to view your subscriptions.";
+  } else if (props.showEdit && username.value) {
+    response = await fetchTemplates(username.value);
+  } else if (props.showEdit && !username.value) {
+    errors.value = "You must be logged in to view your editables.";
+  }
   if (response == null) {
     errors.value = "Couldn't fetch templates.";
   } else if (response.success) {
@@ -29,16 +53,6 @@ onMounted(async () => {
 <template>
   <q-page padding>
     <ErrorBanner :errors="errors" />
-    <div class="q-pa-md">
-      <q-btn
-        class="q-ma-auto"
-        color="primary"
-        :to="{ name: 'templates.create' }"
-      >
-        <q-icon left name="mdi-plus-box" />
-        <q-label for="add_template">Create a new template</q-label>
-      </q-btn>
-    </div>
 
     <div class="q-pa-md items-start q-gutter-md">
       <q-card
@@ -49,7 +63,11 @@ onMounted(async () => {
         flat
         bordered
       >
-        <TemplateComponent :propTemplate="template" :username="username" />
+        <TemplateComponent
+          :propTemplate="template"
+          :username="username"
+          :showEdit="showEdit"
+        />
       </q-card>
     </div>
   </q-page>

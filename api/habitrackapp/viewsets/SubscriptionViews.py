@@ -56,10 +56,10 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'})
+            return JsonResponse({'errors': 'User not found'})
 
         if not user.is_authenticated:
-            return JsonResponse({'error': 'User not logged in'})
+            return JsonResponse({'errors': 'User not logged in'})
 
         subscriptions = Subscription.objects.filter(user=user)
         subscription_data = []

@@ -26,6 +26,7 @@ const entriesCount = ref(0);
 const templates = ref([]);
 const subscriptions = ref([]);
 const entry = ref([]);
+const loaded = ref(false);
 
 const errors = ref(null);
 
@@ -52,26 +53,74 @@ const deleteConfirmed = async () => {
   }
 };
 
+const fetchData = async () => {
+  try {
+    const templateCountResp = await getTemplatesCount(username.value);
+    if (templateCountResp.success) {
+      templatesCount.value = templateCountResp.count;
+    } else {
+      errors.value = templateCountResp.errors;
+    }
+    const subscriptionCountResp = await getSubscriptionsCount(username.value);
+    if (subscriptionCountResp.success) {
+      subscriptionsCount.value = subscriptionCountResp.count;
+    } else {
+      errors.value = subscriptionCountResp.errors;
+    }
+    // response = await getEntriesCount(username.value);
+    // if (response.success) {
+    //   entriesCount.value = response.data;
+    //   console.log("Entries count: ", entriesCount.value);
+    // } else {
+    //   errors.value = response.errors;
+    // }
+
+    const templatesResp = await fetchTemplates(username.value);
+    if (templatesResp.success) {
+      templates.value = templatesResp.data;
+    } else {
+      errors.value = templatesResp.errors;
+    }
+    const subscriptionsResp = await fetchSubscriptions(username.value);
+    if (subscriptionsResp.success) {
+      subscriptions.value = subscriptionsResp.data;
+    } else {
+      errors.value = subscriptionsResp.errors;
+    }
+    // response = await getEntries(username.value);
+    // if (response.success) {
+    //   entry.value = response.data;
+    // } else {
+    //   errors.value = response.errors;
+    // }
+
+    // check if data is loaded
+    if (
+      templatesCount.value &&
+      subscriptionsCount.value &&
+      entriesCount.value &&
+      templates.value &&
+      subscriptions.value
+    ) {
+      return;
+    } else {
+      errors.value = "Failed to load user data";
+    }
+  } catch (error) {
+    Notify.create({
+      message: "Failed to load user data",
+      color: "negative",
+      position: "top",
+    });
+  }
+};
+
 // Load user data and counts on component mount
 onMounted(async () => {
   username.value = await getCurrentUsername();
   if (username.value) {
-    try {
-      templatesCount.value = await getTemplatesCount(username.value);
-      subscriptionsCount.value = await getSubscriptionsCount(username.value);
-      entriesCount.value = await getEntriesCount(username.value);
-
-      templates.value = await fetchTemplates(username.value);
-      subscriptions.value = await fetchSubscriptions(username.value);
-      entry.value = await getEntries(username.value);
-    } catch (error) {
-      console.error(error);
-      Notify.create({
-        message: "Failed to load user data",
-        color: "negative",
-        position: "top",
-      });
-    }
+    await fetchData();
+    loaded.value = true;
   } else {
     errors.value = "You must be logged in to view this page.";
   }
@@ -79,7 +128,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-page>
+  <q-page v-if="loaded">
     <q-card class="q-ma-md">
       <q-card-section>
         <div class="text-h5">My Profile</div>
@@ -92,29 +141,45 @@ onMounted(async () => {
       <q-card-section>
         <q-list
           bordered
-          style="max-height: 10rem"
+          style="max-height: 10rem; overflow-y: auto"
           class="rounded-borders q-ma-md"
         >
           <q-expansion-item :label="`Templates (${templatesCount})`">
             <q-q-expansion-item
               v-for="(template, index) in templates"
               :key="index"
-              >{{ template.name }}</q-q-expansion-item
             >
+              <div class="q-pa-md">
+                <q-card>
+                  <q-card-section>
+                    <div class="text-h6">{{ template.name }}</div>
+                    <div class="text-body">{{ template.description }}</div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </q-q-expansion-item>
           </q-expansion-item>
         </q-list>
 
         <q-list
           bordered
-          style="max-height: 10rem"
+          style="max-height: 10rem; overflow-y: auto"
           class="rounded-borders q-ma-md"
         >
           <q-expansion-item :label="`Subscriptions (${subscriptionsCount})`">
             <q-q-expansion-item
               v-for="(subscription, index) in subscriptions"
               :key="index"
-              >{{ subscription.name }}</q-q-expansion-item
             >
+              <div class="q-pa-md">
+                <q-card>
+                  <q-card-section>
+                    <div class="text-h6">{{ subscription.name }}</div>
+                    <div class="text-body">{{ subscription.description }}</div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </q-q-expansion-item>
           </q-expansion-item>
         </q-list>
 
@@ -142,5 +207,10 @@ onMounted(async () => {
         </div>
       </q-card-section>
     </q-card>
+  </q-page>
+  <q-page v-else>
+    <div class="text-center">
+      <q-spinner-dots size="100px" color="secondary" />
+    </div>
   </q-page>
 </template>

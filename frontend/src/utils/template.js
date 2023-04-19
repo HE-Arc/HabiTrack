@@ -10,11 +10,7 @@ export const fetchTemplates = async (username = null) => {
 };
 
 // Generic function for all of the above (create, update, delete)
-export const templateAction = async (
-  action,
-  template = null,
-  username = null
-) => {
+export const templateAction = async (action, template = null) => {
   const returnValue = {
     errors: [],
     success: null,
@@ -61,31 +57,51 @@ export const templateAction = async (
 };
 
 export const getCreatedTemplates = async (username) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    data: null,
+  };
+  if (!username) {
+    returnValue.errors = ["Please give a username"];
+    return returnValue;
+  }
   try {
     const response = await axios.get(`/templates/user/${username}/`);
     if (response.data.success) {
-      return response.data.templates;
+      returnValue.success = response.data.success;
+      returnValue.data = response.data.templates;
     } else {
-      return null;
+      returnValue.errors = [response.data.error];
     }
   } catch (error) {
-    console.log(error);
+    returnValue.errors = error.response.data.errors;
   }
+  return returnValue;
 };
 
 export const getTemplatesCount = async (username = null) => {
-  if (username) {
-    try {
-      const response = await axios.get(`/templates/count/${username}/`);
-      if (response.data.success) {
-        return response.data.count;
-      } else {
-        return "Error getting template count";
-      }
-    } catch (error) {
-      console.log("[ERROR] getTemplatesCount " + error);
-    }
+  let returnValue = {
+    errors: [],
+    success: null,
+    count: 0,
+  };
+  if (!username) {
+    returnValue.errors = ["Please give a username"];
+    return returnValue;
   }
+  try {
+    const response = await axios.get(`/templates/count/${username}/`);
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.count = response.data.count;
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
 };
 
 export const getEntries = async (username) => {
