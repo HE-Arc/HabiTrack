@@ -23,13 +23,9 @@ class SimpleUserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-
-    # Creations
-
-    # SerializerMethodField is a read-only field that get its
-    # representation from calling a method on the parent serializer class.
-    # The method called will be of the form "get_{field_name}", and should take a single
-    # argument, which is the object being serialized.
+    """
+    SerializerMethodField is a read-only field that get its representation from calling a method on the parent serializer class. The method called will be of the form "get_{field_name}", and should take a single argument, which is the object being serialized.
+    """
     created_templates = serializers.SerializerMethodField()
 
     # This function is used to get the templates of the user
@@ -39,41 +35,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             created_templates, many=True, context=self.context)
         return serializer.data
 
-    # TODO : fix this
-
     class Meta:
         model = User
         fields = SimpleUserSerializer.Meta.fields + [
             "created_templates"
         ]
-
-
-#############################################################
-#                      Register Serializer                  #
-#############################################################
-
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'password2']
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError(
-                {"password": "Password fields didn't match."})
-        return attrs
-
-    def create(self, validated_data):
-        if self.is_valid():
-            user = User.objects.create_user(
-                validated_data['username'], validated_data['password'])
-            return user
-        else:
-            return serializers.ValidationError(self.errors)
 
 
 #############################################################
