@@ -22,8 +22,9 @@ export const isUserSubscribed = async (username, template_id) => {
     subscribed: false,
   };
   if (!username || !template_id) {
-    returnValue.errors = ["Please give a username and template_id",
-      "Values given: " + username + " " + template_id + " "
+    returnValue.errors = [
+      "Please give a username and template_id",
+      "Values given: " + username + " " + template_id + " ",
     ];
     return returnValue;
   }
@@ -50,8 +51,6 @@ export const subOrUnsubScribe = async (route, username, template_id) => {
     errors: [],
     success: null,
   };
-  console.log(username);
-  console.log(template_id);
   if (!username || !template_id) {
     returnValue.errors = ["Please give a username and template_id"];
     return returnValue;

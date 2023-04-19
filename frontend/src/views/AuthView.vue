@@ -15,7 +15,7 @@ const submit = async () => {
     const response = await register(
       username.value,
       password.value,
-      confirm.value
+      confirmPassword.value
     );
     if (response.success != null) {
       Notify.create({

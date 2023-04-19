@@ -192,10 +192,9 @@ class TemplateViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        username = data.get('username')
-
-        if not username:
-            return JsonResponse({'errors': 'Please enter a username'}, status=400)
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
 
         templateData = data.get('template')
         # get template object as Template
@@ -206,7 +205,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
             option_2=templateData.get('option_2'),
             option_3=templateData.get('option_3'),
             option_4=templateData.get('option_4'),
-            creator=User.objects.get(username=username))
+            creator=user)
 
         if template is None:
             return JsonResponse({'errors': 'Something went terribly wrong.'}, status=500)
@@ -215,6 +214,51 @@ class TemplateViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return super().get_queryset().order_by('name')
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+
+        try:
+            template = self.get_object()
+            if user.id != template.creator.id:
+                return JsonResponse({'errors': 'You are not the creator of this template.'}, status=401)
+
+            template.delete()
+        except Template.DoesNotExist:
+            return JsonResponse({'errors': 'Template does not exist.'}, status=404)
+
+        return JsonResponse({'success': 'Successfully deleted template.'})
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        user = request.user
+
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+
+        templateData = data.get('template')
+
+        try:
+            template = Template.objects.get(id=templateData.get('id'))
+            if user.id != template.creator.id:
+                return JsonResponse({'errors': 'You are not the creator of this template.'}, status=400)
+
+            template.name = templateData.get('name', template.name)
+            template.description = templateData.get(
+                'description', template.description)
+            template.option_1 = templateData.get('option_1', template.option_1)
+            template.option_2 = templateData.get('option_2', template.option_2)
+            template.option_3 = templateData.get('option_3', template.option_3)
+            template.option_4 = templateData.get('option_4', template.option_4)
+
+            template.save()
+        except Template.DoesNotExist:
+            return JsonResponse({'errors': 'Template does not exist.'}, status=400)
+
+        return JsonResponse({'success': 'Successfully updated template.'})
 
     @ action(detail=False, methods=['get'], url_path=r"count/(?P<username>[\w.@+-]+)")
     def count_by_user(self, request, username):
@@ -265,7 +309,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
                          'count': count})
 
     # Is a username subscribed to a template?
-    @action(detail=False, methods=['get'], url_path=r"(?P<username>[\w.@+-]+)/subscribed/(?P<template_id>[\w.@+-]+)")
+    @ action(detail=False, methods=['get'], url_path=r"(?P<username>[\w.@+-]+)/subscribed/(?P<template_id>[\w.@+-]+)")
     def is_subscribed(self, request, username, template_id):
         user = get_object_or_404(User, username=username)
         template = get_object_or_404(Template, id=template_id)

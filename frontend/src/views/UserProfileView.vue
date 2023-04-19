@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { onMounted } from "vue";
 import { Notify } from "quasar";
 import { deleteAccount, getCurrentUsername } from "@/utils/auth";
+import DeleteDialog from "../components/DeleteDialog.vue";
 
 import {
   getTemplatesCount,
@@ -21,9 +22,6 @@ const templatesCount = ref(0);
 const subscriptionsCount = ref(0);
 const entriesCount = ref(0);
 
-// Dialog
-const confirmDelete = ref(false);
-
 // Lists
 const templates = ref([]);
 const subscriptions = ref([]);
@@ -36,22 +34,21 @@ const passwordChange = async () => {
   window.location.href = "/change-password";
 };
 
-const deleteClicked = async () => {
-  if (confirmDelete.value) {
-    const response = await deleteAccount(username.value);
-    if (response.success != null) {
-      Notify.create({
-        message: "Account deleted",
-        color: "positive",
-        position: "top",
-      });
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-    } else {
-      console.log(response.errors);
-      errors.value = response.errors;
-    }
+const deleteConfirmed = async () => {
+  // delete account
+  const response = await deleteAccount(username.value);
+  if (response.success) {
+    Notify.create({
+      message: "Account successfully deleted!",
+      color: "positive",
+      position: "top",
+    });
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 1000);
+  } else {
+    console.log(response.errors);
+    errors.value = response.errors;
   }
 };
 
@@ -137,35 +134,11 @@ onMounted(async () => {
             <q-icon :name="'mdi-form-textbox-password'" left />
             <div>Change Password</div>
           </q-btn>
-          <q-btn
-            label="Delete"
-            color="negative"
-            @click="confirmDelete = true"
+          <DeleteDialog
+            :message="`Are you sure you want to delete your account?
+          This action cannot be undone.`"
+            :confirmFunction="deleteConfirmed"
           />
-          <q-dialog v-model="confirmDelete" persistent>
-            <q-card>
-              <q-card-section class="row items-center">
-                <q-avatar
-                  icon="mdi-delete-alert"
-                  color="negative"
-                  text-color="white"
-                />
-                <span class="q-ml-sm"
-                  >Are you sure you want to delete your account?</span
-                >
-              </q-card-section>
-
-              <q-card-actions align="right">
-                <q-btn flat label="Cancel" color="primary" v-close-popup />
-                <q-btn
-                  flat
-                  label="Delete Account"
-                  color="negative"
-                  @click="deleteClicked"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
         </div>
       </q-card-section>
     </q-card>

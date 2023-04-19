@@ -25,20 +25,17 @@ export const templateAction = async (
   try {
     switch (action) {
       case "create":
-        if (username == null) {
-          returnValue.errors = ["No username provided"];
-          break;
-        }
         response = await axios.post(`/templates/`, {
           template: template,
-          username: username,
         });
         break;
       case "get":
         response = await axios.get("/templates/");
         break;
       case "update":
-        response = await axios.put(`/templates/${template.id}/`, template);
+        response = await axios.put(`/templates/`, {
+          template: template,
+        });
         break;
       case "delete":
         response = await axios.delete(`/templates/${template.id}/`);
@@ -58,7 +55,7 @@ export const templateAction = async (
       returnValue.errors = ["Unknown error"];
     }
   } catch (error) {
-    returnValue.errors = error;
+    returnValue.errors = error.response.data;
   }
   return returnValue;
 };
