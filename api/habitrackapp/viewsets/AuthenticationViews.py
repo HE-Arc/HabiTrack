@@ -42,8 +42,10 @@ def get_csrf(request):
     request: HttpRequest
         The HTTP request object.
     """
-    response = JsonResponse({'detail': 'CSRF cookie set'})
-    response['X-CSRFToken'] = get_token(request)
+    response = JsonResponse({
+        'success': 'CSRF cookie set.',
+        'csrfToken': get_token(request)
+    })
     return response
 
 

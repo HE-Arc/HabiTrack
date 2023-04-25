@@ -22,7 +22,7 @@ const props = defineProps({
 
 const templates = ref([]);
 const username = ref(null);
-
+const showEntry = ref(false);
 // We need error handling
 const errors = ref(null);
 
@@ -33,6 +33,7 @@ onMounted(async () => {
     response = await templateAction("get");
   } else if (props.showSubscriptions && username.value) {
     response = await fetchSubscriptions(username.value);
+    showEntry.value = true;
   } else if (props.showSubscriptions && !username.value) {
     errors.value = "You must be logged in to view your subscriptions.";
   } else if (props.showEdit && username.value) {
@@ -67,6 +68,7 @@ onMounted(async () => {
           :propTemplate="template"
           :username="username"
           :showEdit="showEdit"
+          :showEntry="showEntry"
         />
       </q-card>
     </div>

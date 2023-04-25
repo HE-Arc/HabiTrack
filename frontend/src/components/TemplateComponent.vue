@@ -14,6 +14,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showEntry: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const deleteClicked = async () => {
@@ -57,6 +61,11 @@ const updateClicked = async () => {
       position: "top",
     });
   }
+};
+
+const entryClicked = async () => {
+  //! TODO - add entry functionality
+  console.log("Entry clicked");
 };
 
 const isSubbed = async (template_id) => {
@@ -271,6 +280,10 @@ onMounted(async () => {
         :message="`Are you sure you want to delete this template?`"
         :confirmFunction="deleteClicked"
       />
+    </q-card-actions>
+
+    <q-card-actions vertical v-if="showEntry">
+      <q-btn push @click="entryClicked" color="secondary" label="Entries" />
     </q-card-actions>
   </q-card>
   <q-card v-else class="loading-ghost">
