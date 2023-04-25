@@ -4,7 +4,6 @@
 
 <script>
 import { Bar } from "vue-chartjs";
-import { ref } from "vue";
 import {
   Chart as ChartJS,
   Title,
