@@ -6,6 +6,7 @@ import { templateAction } from "../utils/template";
 import { Notify } from "quasar";
 import ErrorBanner from "./ErrorBanner.vue";
 import DeleteDialog from "./DeleteDialog.vue";
+import DetailsComponent from "./details/DetailsComponent.vue";
 
 const props = defineProps({
   propTemplate: {},
@@ -63,9 +64,9 @@ const updateClicked = async () => {
   }
 };
 
-const entryClicked = async () => {
-  //! TODO - add entry functionality
-  console.log("Entry clicked");
+const entryClicked = () => {
+  showSingleTemplate.value = true;
+  showAll.value = false;
 };
 
 const isSubbed = async (template_id) => {
@@ -166,6 +167,8 @@ const errors = ref(null);
 const template = ref(null);
 const loaded = ref(false);
 const isEdit = ref(false);
+const showSingleTemplate = ref(false);
+const showAll = ref(true);
 
 onMounted(async () => {
   username.value = await getCurrentUsername();
@@ -178,7 +181,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-card v-if="loaded">
+  <q-card v-if="loaded && showAll">
     <ErrorBanner :errors="errors" />
     <q-card-section class="text-center">
       <div class="text-h5">{{ template.name }}</div>
@@ -286,6 +289,22 @@ onMounted(async () => {
       <q-btn push @click="entryClicked" color="secondary" label="Entries" />
     </q-card-actions>
   </q-card>
+
+  <q-card v-else-if="showSingleTemplate">
+    <q-btn
+      dense
+      flat
+      round
+      icon="arrow_back"
+      @click="
+        showSingleTemplate = false;
+        showAll = true;
+      "
+      class="q-mt-md q-ml-md"
+    />
+    <DetailsComponent :propTemplate="template" />
+  </q-card>
+
   <q-card v-else class="loading-ghost">
     <q-card-section class="text-center">
       <div class="ghost-avatar"></div>

@@ -56,7 +56,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 
         entryData = data.get('entry')
 
-        template = get_object_or_404(Template, pk=entryData.get('template'))
+        template = get_object_or_404(Template, id=entryData.get('template_id'))
         selected_option = entryData.get('selected_option')
 
         # Check wether selcted_option is between 0 and 3
@@ -151,3 +151,22 @@ class EntryViewSet(viewsets.ModelViewSet):
         entries = Entry.objects.filter(user=user)
         serializer = EntrySerializer(entries, many=True)
         return JsonResponse({'entries': serializer.data})
+
+    @ action(detail=False, methods=['get'], url_path=r"template/(?P<template_id>[\w.@+-]+)")
+    def get_by_template(self, request, template_id):
+        """
+        Is called when a GET request is made to the EntryViewSet with the url path `/entries/template/<template_id>`. It returns a list of all entries associated with a given template ID.
+        """
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
+
+        template = get_object_or_404(Template, pk=template_id)
+        if template.subscribers.filter(id=user.id).exists():
+            return JsonResponse({'errors': 'You\'re not subscribed to this template.'}, status=401)
+
+        entries = Entry.objects.filter(template=template_id)
+        serializer = EntrySerializer(entries, many=True)
+        return JsonResponse({
+            'success': 'Successfully retrieved entries.',
+            'entries': serializer.data})

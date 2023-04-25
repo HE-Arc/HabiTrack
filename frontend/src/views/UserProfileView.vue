@@ -5,12 +5,9 @@ import { Notify } from "quasar";
 import { deleteAccount, getCurrentUsername } from "@/utils/auth";
 import DeleteDialog from "../components/DeleteDialog.vue";
 
-import {
-  getTemplatesCount,
-  getEntriesCount,
-  fetchTemplates,
-  getEntries,
-} from "@/utils/template";
+import { getTemplatesCount, fetchTemplates } from "@/utils/template";
+
+import { getEntriesCount, fetchEntries } from "@/utils/entry";
 
 import {
   getSubscriptionsCount,
@@ -25,7 +22,7 @@ const entriesCount = ref(0);
 // Lists
 const templates = ref([]);
 const subscriptions = ref([]);
-const entry = ref([]);
+const entries = ref([]);
 const loaded = ref(false);
 
 const errors = ref(null);
@@ -61,19 +58,18 @@ const fetchData = async () => {
     } else {
       errors.value = templateCountResp.errors;
     }
+    const entriesCountResp = await getEntriesCount(username.value);
+    if (entriesCountResp.success) {
+      entriesCount.value = entriesCountResp.count;
+    } else {
+      errors.value = entriesCountResp.errors;
+    }
     const subscriptionCountResp = await getSubscriptionsCount(username.value);
     if (subscriptionCountResp.success) {
       subscriptionsCount.value = subscriptionCountResp.count;
     } else {
       errors.value = subscriptionCountResp.errors;
     }
-    // response = await getEntriesCount(username.value);
-    // if (response.success) {
-    //   entriesCount.value = response.data;
-    //   console.log("Entries count: ", entriesCount.value);
-    // } else {
-    //   errors.value = response.errors;
-    // }
 
     const templatesResp = await fetchTemplates(username.value);
     if (templatesResp.success) {
@@ -87,12 +83,12 @@ const fetchData = async () => {
     } else {
       errors.value = subscriptionsResp.errors;
     }
-    // response = await getEntries(username.value);
-    // if (response.success) {
-    //   entry.value = response.data;
-    // } else {
-    //   errors.value = response.errors;
-    // }
+    const entriesResp = await fetchEntries(username.value);
+    if (entriesResp.success) {
+      entries.value = entriesResp.data;
+    } else {
+      errors.value = entriesResp.errors;
+    }
 
     // check if data is loaded
     if (
@@ -183,14 +179,8 @@ onMounted(async () => {
           </q-expansion-item>
         </q-list>
 
-        <!--<q-list bordered class="rounded-borders q-ma-md">
-          <q-expansion-item :label="`Entries (${templatesCount})`">
-            <q-q-expansion-item
-              v-for="entry in entries.value"
-              :key="entry.title"
-            />
-          </q-expansion-item>
-        </q-list>-->
+        <!-- simple Entries count -->
+        <div class="text-h6 q-ma-md">Entries: {{ entriesCount }}</div>
       </q-card-section>
 
       <q-card-section>

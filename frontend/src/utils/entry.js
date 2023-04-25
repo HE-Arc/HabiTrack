@@ -1,16 +1,16 @@
 import axios from "axios";
 
 // For clarity, we split the functions (simplifies maintenance)
-export const fetchTemplates = async (username = null) => {
+export const fetchEntries = async (username = null) => {
   if (username == null) {
-    return templateAction("get");
+    return entryAction("get");
   } else {
-    return getCreatedTemplates(username);
+    return getCreatedEntries(username);
   }
 };
 
 // Generic function for all of the above (create, update, delete)
-export const templateAction = async (action, template = null) => {
+export const entryAction = async (action, entry) => {
   const returnValue = {
     errors: [],
     success: null,
@@ -21,20 +21,20 @@ export const templateAction = async (action, template = null) => {
   try {
     switch (action) {
       case "create":
-        response = await axios.post(`/templates/`, {
-          template: template,
+        response = await axios.post("/entries/", {
+          entry: entry,
         });
         break;
       case "get":
-        response = await axios.get("/templates/");
+        response = await axios.get("/entries/");
         break;
       case "update":
-        response = await axios.put(`/templates/`, {
-          template: template,
+        response = await axios.put("/entries/", {
+          entry: entry,
         });
         break;
       case "delete":
-        response = await axios.delete(`/templates/${template.id}/`);
+        response = await axios.delete(`/entries/${entry.id}/`);
         break;
       default:
         returnValue.errors = ["Invalid action"];
@@ -56,7 +56,7 @@ export const templateAction = async (action, template = null) => {
   return returnValue;
 };
 
-export const getCreatedTemplates = async (username) => {
+export const getCreatedEntries = async (username) => {
   let returnValue = {
     errors: [],
     success: null,
@@ -67,10 +67,10 @@ export const getCreatedTemplates = async (username) => {
     return returnValue;
   }
   try {
-    const response = await axios.get(`/templates/user/${username}/`);
+    const response = await axios.get(`/entries/user/${username}/`);
     if (response.data.success) {
       returnValue.success = response.data.success;
-      returnValue.data = response.data.templates;
+      returnValue.data = response.data.entries;
     } else {
       returnValue.errors = [response.data.error];
     }
@@ -80,21 +80,45 @@ export const getCreatedTemplates = async (username) => {
   return returnValue;
 };
 
-export const getTemplatesCount = async (username = null) => {
+export const getEntriesCount = async (username = null) => {
   let returnValue = {
     errors: [],
     success: null,
-    count: 0,
+    data: null,
   };
   if (!username) {
     returnValue.errors = ["Please give a username"];
     return returnValue;
   }
   try {
-    const response = await axios.get(`/templates/count/${username}/`);
+    const response = await axios.get(`/entries/count/${username}/`);
     if (response.data.success) {
       returnValue.success = response.data.success;
-      returnValue.count = response.data.count;
+      returnValue.data = response.data.count;
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
+};
+
+export const getTemplateEntries = async (templateId = null) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    data: null,
+  };
+  if (!templateId) {
+    returnValue.errors = ["Please give a template id"];
+    return returnValue;
+  }
+  try {
+    const response = await axios.get(`/entries/template/${templateId}/`);
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.data = response.data.entries;
     } else {
       returnValue.errors = [response.data.error];
     }
