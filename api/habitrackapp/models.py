@@ -32,3 +32,15 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('user', 'template')
+
+
+###########################################################################
+# Entry
+
+class Entry(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # The selected option is an integer from 0 to 3
+    selected_option = models.IntegerField()
+    updated = models.BooleanField(default=False)

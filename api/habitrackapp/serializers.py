@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Template, Subscription
+from .models import Template, Subscription, Entry
 from django.contrib.auth.password_validation import validate_password
 
 
@@ -85,7 +85,7 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 #############################################################
-#                    Subscribe Serializer                    #
+#                    Subscribe Serializer                   #
 #############################################################
 
 
@@ -96,3 +96,13 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ('id', 'user', 'template', 'created_at')
+
+
+#############################################################
+#                      Entry Serializer                     #
+#############################################################
+
+class EntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entry
+        fields = ('id', 'user', 'template', 'created_at', 'selected_option')

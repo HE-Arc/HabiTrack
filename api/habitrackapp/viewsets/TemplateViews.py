@@ -52,7 +52,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
         data = request.data
         user = request.user
         if not user.is_authenticated:
-            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
 
         templateData = data.get('template')
         # get template object as Template
@@ -72,7 +72,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Is called when a GET request is made to the TemplateViewSet. dReturns a queryset of all templates ordered by name.
+        Is called when a GET request is made to the TemplateViewSet. Returns a queryset of all templates ordered by name.
         """
         return super().get_queryset().order_by('name')
 
@@ -83,7 +83,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
         user = request.user
 
         if not user.is_authenticated:
-            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
 
         try:
             template = self.get_object()
@@ -104,7 +104,7 @@ class TemplateViewSet(viewsets.ModelViewSet):
         user = request.user
 
         if not user.is_authenticated:
-            return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
 
         templateData = data.get('template')
 
@@ -148,10 +148,10 @@ class TemplateViewSet(viewsets.ModelViewSet):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return JsonResponse({'errors': 'User not found'})
+            return JsonResponse({'errors': 'User not found'}, status=404)
 
         if not user.is_authenticated:
-            return JsonResponse({'errors': 'User not logged in'})
+            return JsonResponse({'errors': 'You\'re not ' + username + '.'}, status=401)
 
         templates = Template.objects.filter(creator=user)
         created_data = []

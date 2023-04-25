@@ -123,7 +123,7 @@ def logout_view(request):
         The HTTP request object.
     """
     if not request.user.is_authenticated:
-        return JsonResponse({'errors': 'You\'re not logged in.'}, status=400)
+        return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
 
     logout(request)
     return JsonResponse({'success': 'Successfully logged out.'})

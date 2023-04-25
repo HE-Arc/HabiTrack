@@ -1,6 +1,7 @@
 # ViewSets
 from .viewsets.TemplateViews import TemplateViewSet
 from .viewsets.SubscriptionViews import SubscriptionViewSet
+from .viewsets.EntryViews import EntryViewSet
 
 # User Tools
 from .views import UserViewSet
@@ -28,6 +29,10 @@ router.register("users",
 router.register("subscriptions",
                 SubscriptionViewSet,
                 basename="subscription")
+
+router.register("entries",
+                EntryViewSet,
+                basename="entry")
 
 urlpatterns = [
     path("", include(router.urls)),

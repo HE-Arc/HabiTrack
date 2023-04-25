@@ -59,7 +59,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             return JsonResponse({'errors': 'User not found'})
 
         if not user.is_authenticated:
-            return JsonResponse({'errors': 'User not logged in'})
+            return JsonResponse({'errors': 'You\'re not ' + username + '.'}, status=401)
 
         subscriptions = Subscription.objects.filter(user=user)
         subscription_data = []
