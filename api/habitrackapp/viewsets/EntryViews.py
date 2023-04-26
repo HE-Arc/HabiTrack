@@ -1,4 +1,5 @@
 # Django
+import datetime
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -165,8 +166,33 @@ class EntryViewSet(viewsets.ModelViewSet):
         if template.subscribers.filter(id=user.id).exists():
             return JsonResponse({'errors': 'You\'re not subscribed to this template.'}, status=401)
 
-        entries = Entry.objects.filter(template=template_id)
+        entries = Entry.objects.filter(template=template_id, user=user)
         serializer = EntrySerializer(entries, many=True)
         return JsonResponse({
             'success': 'Successfully retrieved entries.',
             'entries': serializer.data})
+
+    @ action(detail=False, methods=['get'], url_path=r"template/(?P<template_id>[0-9]+)/today")
+    def get_todays_entry_from_template(self, request, template_id):
+        """
+        Is called when a GET request is made to the EntryViewSet with the url path `/entries/template/<template_id>/today`. It returns the entry object associated with a given template ID and the current date.
+        """
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'errors': 'You\'re not logged in.'}, status=401)
+
+        template = get_object_or_404(Template, pk=template_id)
+        if template.subscribers.filter(id=user.id).exists():
+            return JsonResponse({'errors': 'You\'re not subscribed to this template.'}, status=401)
+
+        entries = Entry.objects.filter(
+            template=template_id, user=user)
+        for entry in entries:
+            if entry.created_at.date() == datetime.date.today():
+                serializer = EntrySerializer(entry)
+                return JsonResponse({
+                    'success': 'Successfully retrieved entry.',
+                    'entry': serializer.data})
+        return JsonResponse({
+            'success': 'No Entry found for today.',
+            'entry': None})

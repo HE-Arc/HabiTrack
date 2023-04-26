@@ -57,10 +57,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <q-page class="q-ma-auto" padding>
-    <ErrorBanner :errors="errors" />
-    <q-form class="" @submit="submit">
-      <div>
+  <div class="justify-center">
+    <q-page class="q-ma-auto" padding>
+      <ErrorBanner :errors="errors" />
+      <q-form class="" @submit="submit">
         <div class="q-mt-md">
           <q-card>
             <q-card-section class="">
@@ -81,6 +81,10 @@ onMounted(async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => val.length < 100 || 'Size limit is 100',
+                ]"
               />
 
               <q-input
@@ -89,6 +93,12 @@ onMounted(async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                type="textarea"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => val.length < 2000 || 'Size limit is 2000',
+                ]"
               />
 
               <q-input
@@ -97,6 +107,11 @@ onMounted(async () => {
                 filled
                 stack-label
                 class="q-mb-md"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => val.length < 30 || 'Size limit is 30',
+                ]"
               />
 
               <q-input
@@ -131,7 +146,7 @@ onMounted(async () => {
             </q-card-section>
           </q-card>
         </div>
-      </div>
-    </q-form>
-  </q-page>
+      </q-form>
+    </q-page>
+  </div>
 </template>

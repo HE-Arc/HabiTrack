@@ -55,7 +55,7 @@ onMounted(async () => {
   <q-page padding>
     <ErrorBanner :errors="errors" />
 
-    <div class="q-pa-md items-start q-gutter-md">
+    <!-- <div class="q-pa-md items-start q-gutter-md">
       <q-card
         class="template-card q-pa-sm"
         style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
@@ -63,14 +63,27 @@ onMounted(async () => {
         :key="index"
         flat
         bordered
+      > -->
+    <div class="row justify-center">
+      <div
+        class="col-md-4 q-ma-md"
+        v-for="(template, index) in templates"
+        :key="index"
       >
-        <TemplateComponent
-          :propTemplate="template"
-          :username="username"
-          :showEdit="showEdit"
-          :showEntry="showEntry"
-        />
-      </q-card>
+        <q-card
+          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
+          class="template-card q-ma-sm stretch-items"
+          flat
+          bordered
+        >
+          <TemplateComponent
+            :propTemplate="template"
+            :username="username"
+            :showEdit="showEdit"
+            :showEntry="showEntry"
+          />
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>

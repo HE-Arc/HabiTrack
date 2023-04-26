@@ -52,7 +52,7 @@ const submit = async () => {
 
 <template>
   <q-form class="" @submit="submit()">
-    <div>
+    <div class="row justify-center">
       <div class="q-ma-md">
         <q-card>
           <q-card-section class="text-center">

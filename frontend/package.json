@@ -15,6 +15,7 @@
     "chart.js": "^4.2.1",
     "js-cookie": "^3.0.1",
     "js-cookies": "^1.0.4",
+    "moment": "^2.29.4",
     "quasar": "^2.11.6",
     "vue": "^3.2.45",
     "vue-chartjs": "^5.2.0",

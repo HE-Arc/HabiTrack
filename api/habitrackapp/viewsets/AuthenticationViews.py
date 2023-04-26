@@ -129,7 +129,7 @@ def logout_view(request):
     return JsonResponse({'success': 'Successfully logged out.'})
 
 
-@ require_POST
+@require_POST
 def change_password_view(request):
     """
     View function that handles changing the user's password. Expects a POST request with a JSON

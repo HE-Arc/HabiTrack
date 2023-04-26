@@ -3,10 +3,10 @@ import TemplatesViewComponent from "../components/TemplatesViewComponent.vue";
 import { getCurrentUsername } from "../utils/auth";
 import { ref, onMounted } from "vue";
 
-const username = ref(null);
+const username = ref({});
 
-onMounted(() => {
-  username.value = getCurrentUsername();
+onMounted(async () => {
+  username.value = await getCurrentUsername();
 });
 </script>
 <template>

@@ -127,3 +127,27 @@ export const getTemplateEntries = async (templateId = null) => {
   }
   return returnValue;
 };
+
+export const getTemplateEntriesToday = async (templateId = null) => {
+  let returnValue = {
+    errors: [],
+    success: null,
+    data: null,
+  };
+  if (!templateId) {
+    returnValue.errors = ["Please give a template id"];
+    return returnValue;
+  }
+  try {
+    const response = await axios.get(`/entries/template/${templateId}/today/`);
+    if (response.data.success) {
+      returnValue.success = response.data.success;
+      returnValue.data = response.data.entry;
+    } else {
+      returnValue.errors = [response.data.error];
+    }
+  } catch (error) {
+    returnValue.errors = error.response.data.errors;
+  }
+  return returnValue;
+};

@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { entryAction } from "../../utils/entry";
-import { getTemplateEntries } from "../../utils/entry";
+import { getTemplateEntries, getTemplateEntriesToday } from "../../utils/entry";
 import GraphComponent from "./GraphComponent.vue";
+import GridComponent from "./GridComponent.vue";
 import { Notify } from "quasar";
 
 const props = defineProps({
@@ -13,8 +14,11 @@ const entries = ref([]);
 const errors = ref([]);
 const selected_option = ref("");
 const entry = ref({});
+const entryToday = ref([]);
+const alreadyEnteredToday = ref(false);
+const loaded = ref(false);
 
-const addEntryClicked = async () => {
+const actionEntryClicked = async (update) => {
   if (selected_option.value === "") {
     Notify.create({
       message: "Please select an option",
@@ -27,7 +31,13 @@ const addEntryClicked = async () => {
     template_id: props.propTemplate.id,
     selected_option: selected_option.value.value,
   };
-  const response = await entryAction("create", entry.value);
+  let response;
+  if (update) {
+    entry.value.id = entryToday.value.id;
+    response = await entryAction("update", entry.value);
+  } else {
+    response = await entryAction("create", entry.value);
+  }
   if (response.success) {
     Notify.create({
       message: "Entry saved!",
@@ -51,6 +61,14 @@ const updateEntries = async () => {
   } else {
     errors.value = response.errors;
   }
+  const responseToday = await getTemplateEntriesToday(props.propTemplate.id);
+  if (responseToday.success && responseToday.data !== null) {
+    entryToday.value = responseToday.data;
+    alreadyEnteredToday.value = true;
+  } else {
+    errors.value = responseToday.errors;
+  }
+  loaded.value = true;
 };
 
 onMounted(async () => {
@@ -60,6 +78,11 @@ onMounted(async () => {
 
 <template>
   <GraphComponent :propTemplate="propTemplate" :propEntries="entries" />
+  <GridComponent
+    v-if="loaded"
+    :propTemplate="propTemplate"
+    :propEntries="entries"
+  />
   <q-form>
     <q-select
       v-model="selected_option"
@@ -73,6 +96,17 @@ onMounted(async () => {
       option-value="value"
       class="q-mb-md"
     />
-    <q-btn label="Add Entry" color="primary" @click="addEntryClicked" />
+    <q-btn
+      v-if="!alreadyEnteredToday"
+      label="Add Entry"
+      color="primary"
+      @click="actionEntryClicked(false)"
+    />
+    <q-btn
+      v-else
+      label="Update Entry"
+      color="primary"
+      @click="actionEntryClicked(true)"
+    />
   </q-form>
 </template>
