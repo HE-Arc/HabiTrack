@@ -57,95 +57,95 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="justify-center">
-    <q-page class="q-ma-auto" padding>
+  <div class="row justify-center q-mx-xl q-pt-md">
+    <q-page class="create-template-card">
       <ErrorBanner :errors="errors" />
       <q-form class="" @submit="submit">
-        <div class="q-mt-md">
-          <q-card>
-            <q-card-section class="">
-              <q-btn color="primary" :to="{ name: 'templates' }">
-                <q-icon left name="mdi-arrow-left" />
-                <div>Back</div>
-              </q-btn>
-            </q-card-section>
+        <!-- <div class="q-mt-md"> -->
+        <q-card>
+          <q-card-section class="">
+            <q-btn color="primary" :to="{ name: 'templates' }">
+              <q-icon left name="mdi-arrow-left" />
+              <div>Back</div>
+            </q-btn>
+          </q-card-section>
 
-            <q-card-section class="text-center">
-              <div class="text-h5">Create a new template</div>
-            </q-card-section>
+          <q-card-section class="text-center">
+            <div class="text-h5">Create a new template</div>
+          </q-card-section>
 
-            <q-card-section>
-              <q-input
-                v-model="name"
-                label="Name"
-                filled
-                stack-label
-                class="q-mb-md"
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
-                  (val) => val.length < 100 || 'Size limit is 100',
-                ]"
-              />
+          <q-card-section>
+            <q-input
+              v-model="name"
+              label="Name"
+              filled
+              stack-label
+              class="q-mb-md"
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 100 || 'Size limit is 100',
+              ]"
+            />
 
-              <q-input
-                v-model="description"
-                label="Description"
-                filled
-                stack-label
-                class="q-mb-md"
-                type="textarea"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
-                  (val) => val.length < 2000 || 'Size limit is 2000',
-                ]"
-              />
+            <q-input
+              v-model="description"
+              label="Description"
+              filled
+              stack-label
+              class="q-mb-md"
+              type="textarea"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 2000 || 'Size limit is 2000',
+              ]"
+            />
 
-              <q-input
-                v-model="option_1"
-                label="Option 1"
-                filled
-                stack-label
-                class="q-mb-md"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
-                  (val) => val.length < 30 || 'Size limit is 30',
-                ]"
-              />
+            <q-input
+              v-model="option_1"
+              label="Option 1"
+              filled
+              stack-label
+              class="q-mb-md"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+                (val) => val.length < 30 || 'Size limit is 30',
+              ]"
+            />
 
-              <q-input
-                v-model="option_2"
-                label="Option 2"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="option_2"
+              label="Option 2"
+              filled
+              stack-label
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_3"
-                label="Option 3"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
+            <q-input
+              v-model="option_3"
+              label="Option 3"
+              filled
+              stack-label
+              class="q-mb-md"
+            />
 
-              <q-input
-                v-model="option_4"
-                label="Option 4"
-                filled
-                stack-label
-                class="q-mb-md"
-              />
-            </q-card-section>
+            <q-input
+              v-model="option_4"
+              label="Option 4"
+              filled
+              stack-label
+              class="q-mb-md"
+            />
+          </q-card-section>
 
-            <q-card-section class="q-gutter-y-sm">
-              <div class="text-center">
-                <q-btn type="submit" color="primary" label="Submit" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
+          <q-card-section class="q-gutter-y-sm">
+            <div class="text-center">
+              <q-btn type="submit" color="primary" label="Submit" />
+            </div>
+          </q-card-section>
+        </q-card>
+        <!-- </div> -->
       </q-form>
     </q-page>
   </div>

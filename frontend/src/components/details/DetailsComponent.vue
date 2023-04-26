@@ -12,7 +12,7 @@ props; // stop eslint complaining
 <template>
   <q-page padding>
     <ErrorBanner :errors="errors" />
-    <q-card style="height: 500px">
+    <q-card>
       <q-card-section>
         <h2 class="text-h4">{{ propTemplate.name }}</h2>
       </q-card-section>

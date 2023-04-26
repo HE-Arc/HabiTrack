@@ -66,13 +66,13 @@ onMounted(async () => {
       > -->
     <div class="row justify-center">
       <div
-        class="col-md-4 q-ma-md"
+        class="q-mx-md q-mt-md"
         v-for="(template, index) in templates"
         :key="index"
       >
         <q-card
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-          class="template-card q-ma-sm stretch-items"
+          class="template-card"
           flat
           bordered
         >
@@ -87,10 +87,3 @@ onMounted(async () => {
     </div>
   </q-page>
 </template>
-
-<style lang="sass" scoped>
-.template-card
-  width: 100%
-  height: 100%
-  max-width: 20rem
-</style>

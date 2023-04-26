@@ -35,7 +35,6 @@ onMounted(() => {
   for (i = 0; i < dayOfWeekOffset; i++) {
     output += "<li class = 'offset'></li>";
   }
-
   /*** draw calendar ***/
   for (i = 365; i >= 0; i--) {
     let daysEntry = props.propEntries.filter((entry) => {
@@ -90,7 +89,7 @@ li {
   list-style: none;
 }
 h1 {
-  font-size: 1.5em;
+  font-size: 0.75em;
   margin: 70px 42px;
 }
 
@@ -104,8 +103,7 @@ h1 {
 }
 .activity-chart {
   width: 720px;
-  height: 205px;
-  padding-left: 110px; /* center in container */
+  height: 200px;
   margin: 50px 150px;
   position: relative;
 
@@ -115,15 +113,13 @@ h1 {
 /*** day of week heading ***/
 
 .days-of-week {
-  width: 15px;
-  position: absolute;
-  left: -10px;
-  top: 80px;
+  left: -120px;
+  bottom: 1.5px;
 }
 
 @-moz-document url-prefix() {
   .days-of-week {
-    left: 23px;
+    left: 10px;
   }
 }
 
@@ -138,13 +134,13 @@ h1 {
 
 .month ol {
   position: absolute;
-  top: 40px;
-  left: -30px;
+  top: 20px;
+  left: -120px;
 }
 
 .month li {
   float: right;
-  margin-left: 39px;
+  margin-left: 30px;
   font-size: 0.75em;
 }
 
@@ -152,7 +148,6 @@ h1 {
 
 .days {
   font-size: 0.75em;
-  margin-top: 15px;
   float: right; /* needed to float onto screen */
 }
 
@@ -167,14 +162,16 @@ over-specified to win specificity battle */
 
 /* create vertical weeks */
 .week {
-  width: 108px;
+  width: 90px;
   transform: rotate(90deg);
+  margin-right: 130px;
+  margin-bottom: -35px;
 }
 
 .days li,
 .key li {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   float: right; /* order days starting at the bottom right */
 }
 
@@ -182,7 +179,7 @@ over-specified to win specificity battle */
   font-weight: bold;
 }
 .days li {
-  margin: 1.5px;
+  margin: 1px;
 }
 
 /*** color-code by activity level ***/
@@ -202,7 +199,7 @@ over-specified to win specificity battle */
 .key {
   position: absolute;
   bottom: 0;
-  right: 55px;
+  right: 400px;
 }
 
 .key ul {

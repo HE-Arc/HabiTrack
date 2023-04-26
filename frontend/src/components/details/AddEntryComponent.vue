@@ -83,6 +83,7 @@ onMounted(async () => {
     :propTemplate="propTemplate"
     :propEntries="entries"
   />
+
   <q-form>
     <q-select
       v-model="selected_option"
