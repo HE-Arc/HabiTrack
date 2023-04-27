@@ -56,6 +56,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ALLOWED_HOSTS = [
+    os.getenv("SERVER_HOST")
+]
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv("LOCALHOST_URL"),
