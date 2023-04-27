@@ -12,6 +12,7 @@ const confirmPassword = ref("");
 const showRegisterFields = ref(false);
 
 const submit = async () => {
+  errors.value = [];
   if (showRegisterFields.value) {
     const response = await register(
       username.value,

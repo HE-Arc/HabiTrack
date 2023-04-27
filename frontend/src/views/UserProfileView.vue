@@ -4,6 +4,7 @@ import { onMounted } from "vue";
 import { Notify } from "quasar";
 import { deleteAccount, getCurrentUsername } from "@/utils/auth";
 import DeleteDialog from "../components/DeleteDialog.vue";
+import router from "@/router";
 
 import { getTemplatesCount, fetchTemplates } from "@/utils/template";
 
@@ -29,7 +30,7 @@ const errors = ref(null);
 
 const passwordChange = async () => {
   // redirect to password change page
-  window.location.href = "/change-password";
+  router.push({ name: "passwordChange" });
 };
 
 const deleteConfirmed = async () => {
@@ -42,7 +43,7 @@ const deleteConfirmed = async () => {
       position: "top",
     });
     setTimeout(() => {
-      window.location.href = "/login";
+      router.push({ name: "login" });
     }, 1000);
   } else {
     console.log(response.errors);

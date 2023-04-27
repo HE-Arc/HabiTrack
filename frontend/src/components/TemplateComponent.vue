@@ -7,6 +7,7 @@ import { Notify } from "quasar";
 import ErrorBanner from "./ErrorBanner.vue";
 import DeleteDialog from "./DeleteDialog.vue";
 import DetailsComponent from "./details/DetailsComponent.vue";
+import router from "@/router";
 
 const props = defineProps({
   propTemplate: {},
@@ -33,7 +34,9 @@ const deleteClicked = async () => {
       color: "positive",
       position: "top",
     });
-    window.location.href = "/templates";
+    setTimeout(() => {
+      router.push({ name: "templates" });
+    }, 1000);
   } else {
     Notify.create({
       message: response.errors.errors,
@@ -103,7 +106,7 @@ const subscribe = async (template_id) => {
           label: "Yes",
           color: "white",
           handler: () => {
-            window.location.href = "/login";
+            router.push({ name: "login" });
           },
         },
         {

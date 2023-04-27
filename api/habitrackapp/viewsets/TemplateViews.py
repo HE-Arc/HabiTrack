@@ -74,7 +74,8 @@ class TemplateViewSet(viewsets.ModelViewSet):
         """
         Is called when a GET request is made to the TemplateViewSet. Returns a queryset of all templates ordered by name.
         """
-        return super().get_queryset().order_by('name')
+        templates = Template.objects.all().order_by('name')
+        return templates
 
     def destroy(self, request, *args, **kwargs):
         """

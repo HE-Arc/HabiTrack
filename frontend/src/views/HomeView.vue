@@ -18,9 +18,9 @@ onMounted(() => {
     <div class="col-md-4 q-ma-md">
       <!--{{ users }}-->
       <div class="q-body-1">
-        Le but de se projet est de pouvoir suivre ses habitudes, il est possible
-        de créer des Templates, d'y souscrire ainsi que une fois par jour
-        remplir un mini-sondage selon l'habitude qu'on veut suivre.
+        The goal of this project is to be able to follow your habits, it is
+        possible to create Templates, subscribe to them and once a day fill a
+        mini-survey according to the habit you want to follow.
       </div>
     </div>
   </div>

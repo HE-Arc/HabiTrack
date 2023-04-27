@@ -23,8 +23,8 @@ const props = defineProps({
 const templates = ref([]);
 const username = ref(null);
 const showEntry = ref(false);
-// We need error handling
 const errors = ref(null);
+const notif = ref(null);
 
 onMounted(async () => {
   username.value = await getCurrentUsername();
@@ -43,6 +43,10 @@ onMounted(async () => {
   }
   if (response == null) {
     errors.value = "Couldn't fetch templates.";
+  } else if (response.success && response.data === 0) {
+    notif.value = "No templates found.";
+  } else if (response.success && response.data.length === 0) {
+    notif.value = "No subscriptions found.";
   } else if (response.success) {
     templates.value = response.data;
   } else if (response.errors) {
@@ -54,16 +58,7 @@ onMounted(async () => {
 <template>
   <q-page padding>
     <ErrorBanner :errors="errors" />
-
-    <!-- <div class="q-pa-md items-start q-gutter-md">
-      <q-card
-        class="template-card q-pa-sm"
-        style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        v-for="(template, index) in templates"
-        :key="index"
-        flat
-        bordered
-      > -->
+    <p v-if="notif">{{ notif }}</p>
     <div class="row justify-center">
       <div
         class="q-mx-md q-mt-md"

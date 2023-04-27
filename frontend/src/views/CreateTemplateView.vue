@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { getCurrentUsername } from "@/utils/auth.js";
 import { templateAction } from "@/utils/template.js";
 import { Notify } from "quasar";
+import router from "@/router";
 
 const errors = ref(null);
 
@@ -35,13 +36,9 @@ const submit = async () => {
       color: "positive",
       position: "top",
     });
-    // clear input fields
-    name.value = "";
-    description.value = "";
-    option_1.value = "";
-    option_2.value = "";
-    option_3.value = "";
-    option_4.value = "";
+    setTimeout(() => {
+      router.push({ name: "edits" });
+    }, 1000);
   } else {
     errors.value = response.errors;
   }

@@ -47,6 +47,9 @@ export const templateAction = async (action, template = null) => {
     } else if (response.status === 200 && response.data.length > 0) {
       returnValue.success = true;
       returnValue.data = response.data;
+    } else if (response.status === 200 && response.data.length === 0) {
+      returnValue.success = true;
+      returnValue.data = 0;
     } else {
       returnValue.errors = ["Unknown error"];
     }
