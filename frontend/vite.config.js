@@ -14,6 +14,11 @@ export default defineConfig({
       sassVariables: "src/quasar-variables.sass",
     }),
   ],
+  esbuild: {
+    supported: {
+      "top-level-await": true,
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
