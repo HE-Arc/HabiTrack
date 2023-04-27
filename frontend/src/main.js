@@ -26,12 +26,13 @@ axios.defaults.baseURL = import.meta.env.VITE_APP_API_URL;
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
+// Problème Django donc forcé de solution alternative:
 let csrftoken = Cookies.get("csrftoken");
 if (csrftoken == undefined) {
   const response = await axios.get("csrf/");
 
   Cookies.set("csrftoken", response.data.csrfToken, {
-    expires: 1 / 48,
+    expires: 365 * 10, // Hacks (Approved by Alex "git blame alex")
   });
   csrftoken = Cookies.get("csrftoken");
 }

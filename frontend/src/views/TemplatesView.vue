@@ -9,7 +9,7 @@ const username = ref({});
 const createClicked = async () => {
   username.value = await getCurrentUsername();
   if (username.value) {
-    router.push({ name: "create" });
+    router.push({ name: "templates.create" });
   } else {
     router.push({ name: "login" });
   }

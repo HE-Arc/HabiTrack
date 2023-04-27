@@ -24,7 +24,7 @@ const submit = async () => {
 
 onMounted(() => {
   // Call a function everytime the router changes
-  router.afterEach(async (to, from) => {
+  router.afterEach(async () => {
     username.value = await getCurrentUsername();
   });
 });
@@ -59,6 +59,7 @@ onMounted(() => {
       <q-tab v-if="username" :to="{ name: 'logout' }" @click="submit">
         Logout
       </q-tab>
+      <q-route-tab :to="{ name: 'about' }" label="About" />
     </q-tabs>
   </q-header>
 </template>

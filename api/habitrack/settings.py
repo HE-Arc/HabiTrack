@@ -56,22 +56,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ALLOWED_HOSTS = [
-    os.getenv("LOCALHOST"),
-    os.getenv("SERVER_HOST")
-]
-
-CORS_ALLOWED_ORIGINS = [
-    os.getenv("LOCALHOST_URL"),
-    os.getenv("LOCALHOST_IP"),
-    os.getenv("SERVER_URL")
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    os.getenv("LOCALHOST_URL"),
-    os.getenv("LOCALHOST_IP"),
-    os.getenv("SERVER_URL")
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 
 CORS_ALLOW_CREDENTIALS = True
 

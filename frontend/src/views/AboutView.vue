@@ -1,15 +1,9 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <p>An App made by three students with not enough time...<br /></p>
+  <a href="https://github.com/guillaumemouchet" target="_blank"
+    >Guillaume Mouchet</a
+  ><br />
+  <a href="https://github.com/WindRider97/" target="_blank">Benjamin Mouchet</a
+  ><br />
+  <a href="https://github.com/TitusVM" target="_blank">Titus Abele</a><br />
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
