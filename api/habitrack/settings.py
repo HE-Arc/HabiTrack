@@ -57,6 +57,7 @@ MIDDLEWARE = [
 ]
 
 ALLOWED_HOSTS = [
+    os.getenv("LOCALHOST"),
     os.getenv("SERVER_HOST")
 ]
 
