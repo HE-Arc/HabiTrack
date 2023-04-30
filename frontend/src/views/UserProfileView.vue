@@ -28,9 +28,9 @@ const loaded = ref(false);
 
 const errors = ref(null);
 
-const passwordChange = async () => {
+const changePassword = async () => {
   // redirect to password change page
-  router.push({ name: "passwordChange" });
+  router.push({ name: "change-password" });
 };
 
 const deleteConfirmed = async () => {
@@ -186,7 +186,7 @@ onMounted(async () => {
 
       <q-card-section>
         <div class="text-center">
-          <q-btn color="secondary" @click="passwordChange" class="q-mr-md">
+          <q-btn color="secondary" @click="changePassword" class="q-mr-md">
             <q-icon :name="'mdi-form-textbox-password'" left />
             <div>Change Password</div>
           </q-btn>
