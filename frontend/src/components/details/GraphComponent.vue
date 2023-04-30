@@ -54,15 +54,7 @@ export default {
       const options = { year: "numeric", month: "short", day: "numeric" };
       return date.toLocaleDateString("en-US", options);
     },
-    // last 10 entries
     getEntries() {
-      //   let templateOptions = [ // TODO MAYBE ANOTHER DAY
-      //     this.propTemplate.option_1,
-      //     this.propTemplate.option_2,
-      //     this.propTemplate.option_3,
-      //     this.propTemplate.option_4,
-      //     this.propTemplate.option_5,
-      //   ];
       return this.propEntries.map((entry) => entry.selected_option);
     },
   },
