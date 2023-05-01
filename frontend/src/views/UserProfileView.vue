@@ -28,9 +28,11 @@ const loaded = ref(false);
 
 const errors = ref(null);
 
-const changePassword = async () => {
+const changePassword = () => {
   // redirect to password change page
-  router.push({ name: "change-password" });
+  setTimeout(() => {
+    router.push({ name: "change-password" });
+  }, 10);
 };
 
 const deleteConfirmed = async () => {
