@@ -138,7 +138,9 @@ class EntryViewSet(viewsets.ModelViewSet):
         """
         user = get_object_or_404(User, username=username)
         count = Entry.objects.filter(user=user).count()
-        return JsonResponse({'count': count})
+        return JsonResponse({
+            'success': 'Successfully retrieved entry count.',
+            'count': count})
 
     @ action(detail=False, methods=['get'], url_path=r"user/(?P<username>[\w.@+-]+)")
     def get_by_user(self, request, username):

@@ -63,7 +63,7 @@ const fetchData = async () => {
     }
     const entriesCountResp = await getEntriesCount(username.value);
     if (entriesCountResp.success) {
-      entriesCount.value = entriesCountResp.count;
+      entriesCount.value = entriesCountResp.data;
     } else {
       errors.value = entriesCountResp.errors;
     }
