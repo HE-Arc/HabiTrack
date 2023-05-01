@@ -117,6 +117,7 @@ onMounted(async () => {
               filled
               stack-label
               class="q-mb-md"
+              :rules="[(val) => val.length < 30 || 'Size limit is 30']"
             />
 
             <q-input
@@ -125,6 +126,7 @@ onMounted(async () => {
               filled
               stack-label
               class="q-mb-md"
+              :rules="[(val) => val.length < 30 || 'Size limit is 30']"
             />
 
             <q-input
@@ -133,6 +135,7 @@ onMounted(async () => {
               filled
               stack-label
               class="q-mb-md"
+              :rules="[(val) => val.length < 30 || 'Size limit is 30']"
             />
           </q-card-section>
 
