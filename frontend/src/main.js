@@ -11,7 +11,7 @@ import "quasar/src/css/index.sass";
 import App from "./App.vue";
 import router from "./router";
 import Cookies from "js-cookie";
-import "./assets/main.css";
+import "./static/main.css";
 
 const app = createApp(App);
 

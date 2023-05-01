@@ -24,5 +24,5 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <img src="../assets/logo-hearc.png" class="float-right vertical-bottom" />
+  <img src="../static/logo-hearc.png" class="float-right vertical-bottom" />
 </template>
